@@ -1,0 +1,15 @@
+tr th {
+    border-width: 4px;
+    min-width: 150px;
+}
+
+table {
+    width: 100%;
+}
+
+mat-card {
+    display: flex; 
+    justify-content: center; 
+    align-items: center;
+    height: 110px;
+}

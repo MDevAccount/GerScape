@@ -1,0 +1,24 @@
+/* .container{
+    display: flex;
+} */
+/* .skill-table{
+    width: 100%
+} */
+/* @media (min-width: 320px) { 
+    .skill-table{
+        width: 100%;
+        background-color: pink;
+        }
+    .info{
+        width: 100%;
+    }
+}
+@media (min-width: 768px) { 
+    .skill-table{
+        width: 75%;
+        background-color: aqua;
+    }
+    .info{
+        width: 25%;
+    }
+} */
