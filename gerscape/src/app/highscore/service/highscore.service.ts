@@ -17,8 +17,9 @@ export class HighscoreService {
 
     public static MAX_TOTAL_XP = 5400000000;
     public static MAX_SKILL_XP = 200000000;
-    public static MAX_LEVEL = 2694;
+    public static MAX_LEVEL = 2673;
     public static COMP_LEVEL = 2778;
+    public static ALL_120_TOTAL_LEVEL = 3240;
     public static XP_AT_120 = 104273167;
 
     public static SKILL_NAMES = [
@@ -127,15 +128,18 @@ export class HighscoreService {
             return rsData.skills[0].xp == HighscoreService.MAX_TOTAL_XP;
     }
 
-    hasCompLevel(rsData: RuneMetricsProfile | HighscoreLight) {
+    hasCompLevel(rsData: RuneMetricsProfile) {
         if (!rsData)
             return false;
 
-        if (rsData instanceof RuneMetricsProfile)
-            return rsData.totalskill == HighscoreService.COMP_LEVEL;
+        return rsData.totalskill == HighscoreService.COMP_LEVEL;
+    }
 
-        if (rsData instanceof HighscoreLight)
-            return rsData.skills[0].level == HighscoreService.COMP_LEVEL;
+    hasCompLevelLight(rsData: HighscoreLight) {
+        if (!rsData)
+            return false;
+
+        return rsData.skills[0].level == HighscoreService.COMP_LEVEL;
     }
 
     hasMaxLevel(rsData: RuneMetricsProfile | HighscoreLight) {

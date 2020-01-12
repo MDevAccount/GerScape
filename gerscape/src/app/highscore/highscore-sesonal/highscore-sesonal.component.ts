@@ -3,16 +3,17 @@ import { MatSort, MatTableDataSource } from '@angular/material';
 import { Activity } from '../model/runemetrics-profile.model';
 import { AppState } from 'src/app/store/app.reducer';
 import { Store } from '@ngrx/store';
+import { SesonalEvent } from '../model/sesonal-event.model';
 
 @Component({
-  selector: 'app-highscore-activities',
-  templateUrl: 'highscore-activities.component.html',
-  styleUrls: ['highscore-activities.component.css'],
+  selector: 'app-highscore-sesonal',
+  templateUrl: 'highscore-sesonal.component.html',
+  styleUrls: ['highscore-sesonal.component.css'],
 })
-export class HighscoreActivitiesComponent implements OnInit {
+export class HighscoreSesonalEventsComponent implements OnInit {
   @ViewChild(MatSort, {static:true}) sort: MatSort;
-  displayedColumns: string[] = ['date', 'text', 'details'];
-  dataSource = new MatTableDataSource<Activity>([]);
+  displayedColumns: string[] = ['startDate', 'endDate', 'title', 'score_raw', 'rank'];
+  dataSource = new MatTableDataSource<SesonalEvent>([]);
 
   constructor(
     private store: Store<AppState>) {
@@ -23,7 +24,7 @@ export class HighscoreActivitiesComponent implements OnInit {
     this.dataSource.sort = this.sort;
 
     this.store.select('highscore').subscribe(state => {
-      this.dataSource.data = state.runemetricsProfile.activities;
+      this.dataSource.data = state.sesonalEvents;
     });
   }
 

@@ -22,5 +22,5 @@ export class Quest {
 export enum Status {
     Completed = "COMPLETED",
     NotStarted = "NOT_STARTED",
-    Started = "STARTED",
+    Started = "STARTED"
 }

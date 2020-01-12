@@ -90,11 +90,11 @@ export class HighscoreEffects {
                                 strResponse.split('\n').forEach((clanMember, index) => {
                                     const clanMemberProperty = clanMember.split(",");
                                     if (index > 0) {
-                                        role = Object.values(Role).filter(role => role == clanMemberProperty[1]);
-                                        clanMembers.push(new ClanMember(clanMemberProperty[0], Role[role], +clanMemberProperty[2], +clanMemberProperty[3]));
+                                        role = Object.keys(Role).filter(k => k == clanMemberProperty[1]);
+                                        //role = Object.keys(Role).filter(role => role == clanMemberProperty[1]);
+                                        clanMembers.push(new ClanMember(clanMemberProperty[0], role, +clanMemberProperty[2], +clanMemberProperty[3]));
                                     } 
                                 });
-                                console.log(clanMembers);
                                 return new HighscoreActions.SetClanMembers(clanMembers);
                             }, 
                             catchError(error  => {
