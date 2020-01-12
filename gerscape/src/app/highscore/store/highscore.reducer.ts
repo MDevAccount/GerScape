@@ -4,6 +4,7 @@ import { PlayerDetails } from 'src/app/highscore/model/player-details.model';
 import { RuneMetricsProfile } from 'src/app/highscore/model/runemetrics-profile.model';
 import { QuestResponse } from 'src/app/highscore/model/quest.model';
 import { SesonalEvent } from '../model/sesonal-event.model';
+import { ClanMember } from '../model/clanmember.model';
 
 
 export interface State {
@@ -11,7 +12,8 @@ export interface State {
     questResponse: QuestResponse,
     highscoreLight: HighscoreLight,
     playerDetails: PlayerDetails,
-    sesonalEvents: SesonalEvent[]
+    sesonalEvents: SesonalEvent[],
+    clanMembers: ClanMember[]
 }
 
 const initialState: State = {
@@ -19,7 +21,8 @@ const initialState: State = {
     questResponse: new QuestResponse([], ""),
     highscoreLight: new HighscoreLight(0, 0, 0, [], []),
     playerDetails: new PlayerDetails(false, false, "", "", ""),
-    sesonalEvents: []
+    sesonalEvents: [],
+    clanMembers: []
 };
 
 export function highscoreReducer(state = initialState, action: HighscoreActions.HighscoreActions) {
@@ -55,6 +58,12 @@ export function highscoreReducer(state = initialState, action: HighscoreActions.
                 ...state,
                 sesonalEvents: action.payload
             };  
+
+        case HighscoreActions.SET_CLAN_MEMBERS:
+            return {
+                ...state,
+                clanMembers: action.payload
+            };
 
         default:
             return state;

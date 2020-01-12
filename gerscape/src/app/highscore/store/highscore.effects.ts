@@ -9,6 +9,7 @@ import { RuneMetricsProfile } from 'src/app/highscore/model/runemetrics-profile.
 import { QuestResponse } from '../model/quest.model';
 import { PlayerDetails } from '../model/player-details.model';
 import { SesonalEvent } from '../model/sesonal-event.model';
+import { ClanMember, Role } from '../model/clanmember.model';
 
 
 interface RuneMetricsError {
@@ -74,6 +75,37 @@ export class HighscoreEffects {
         );
 
     @Effect()
+    fetchClanMembers = this.actions$
+        .pipe(
+            ofType(HighscoreActions.FETCH_CLAN_MEMBERS),
+            switchMap((action: HighscoreActions.FetchClanMembers) => {
+                const playerName = action.payload;
+                const url = HighscoreService.URL_CLANMEMBERS;
+                return this.highscoreService
+                    .createHttpGetRequest<string>(playerName, url, true)
+                        .pipe(
+                            map(strResponse => {
+                                let clanMembers: ClanMember[] = [];
+                                let role;
+                                strResponse.split('\n').forEach((clanMember, index) => {
+                                    const clanMemberProperty = clanMember.split(",");
+                                    if (index > 0) {
+                                        role = Object.values(Role).filter(role => role == clanMemberProperty[1]);
+                                        clanMembers.push(new ClanMember(clanMemberProperty[0], Role[role], +clanMemberProperty[2], +clanMemberProperty[3]));
+                                    } 
+                                });
+                                console.log(clanMembers);
+                                return new HighscoreActions.SetClanMembers(clanMembers);
+                            }, 
+                            catchError(error  => {
+                                console.log("error: " + error);
+                                return of(new HighscoreActions.SetClanMembers([])); 
+                            }))
+                        )
+            })
+        );
+
+    @Effect()
     fetchSesonalEvents = this.actions$
         .pipe(
             ofType(HighscoreActions.FETCH_SESONAL_EVENTS),
@@ -104,7 +136,12 @@ export class HighscoreEffects {
                     .createHttpGetRequest<RuneMetricsProfile>(playerName, url)
                         .pipe(
                             map(runeMetricsProfileResponse => {
-                                console.log(runeMetricsProfileResponse);
+                                //Remove last diggit here because its nachkommastelle and our pipe will fuck it up 
+                                let toStr = "";
+                                runeMetricsProfileResponse.skillvalues.forEach((skillValue, index, theArr) => {
+                                    toStr = "" + skillValue.xp;
+                                    theArr[index].xp = +toStr.substr(0, toStr.length - 1);
+                                });
                                 return new HighscoreActions.SetRuneMetricsProfile(runeMetricsProfileResponse);
                             }, 
                             catchError((runeMetricsError: RuneMetricsError) => {
@@ -133,7 +170,7 @@ export class HighscoreEffects {
                                         highscoreLight.totalLevel = +skillProperty[1];
                                         highscoreLight.totalXp = +skillProperty[2];
                                     } else  if (index <= 27) {
-                                        highscoreLight.skills.push(new Skill(+skillProperty[0], +skillProperty[2], +skillProperty[1]));
+                                        highscoreLight.skills.push(new Skill(index - 1, +skillProperty[1], +skillProperty[2], +skillProperty[0]));
                                     } else {
                                         highscoreLight.minigames.push(new Minigame(+skillProperty[1], + skillProperty[0]));
                                     }    

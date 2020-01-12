@@ -4,16 +4,17 @@ import { QuestResponse } from 'src/app/highscore/model/quest.model';
 import { RuneMetricsProfile } from 'src/app/highscore/model/runemetrics-profile.model';
 import { PlayerDetails } from '../model/player-details.model';
 import { SesonalEvent } from '../model/sesonal-event.model';
+import { ClanMember } from '../model/clanmember.model';
 
 
 export const SET_PLAYER_DETAILS = "[Highscore] Set player details";
-//export const SET_CLAN_MEMBERS = "[Highscore] Set clan members";
+export const SET_CLAN_MEMBERS = "[Highscore] Set clan members";
 export const SET_SESONAL_EVENTS = "[Highscore] Set sesonal events";
 export const SET_QUESTS = "[Highscore] Set quests";
 export const SET_HIGHSCORE_LIGHT = "[Highscore] Set highscore light";
 export const SET_RUNEMETRICS_PROFILE = "[Highscore] Set runemetrics profile";
 export const FETCH_PLAYER_DETAILS = "[Highscore] Fetch player details";
-//export const FETCH_CLAN_MEMBERS = "[Highscore] Fetch clan members";
+export const FETCH_CLAN_MEMBERS = "[Highscore] Fetch clan members";
 export const FETCH_SESONAL_EVENTS = "[Highscore] Fetch sesonal events";
 export const FETCH_HIGHSCORE_LIGHT = "[Highscore] Fetch highscore light";
 export const FETCH_QUESTS = "[Highscore] Fetch quests";
@@ -83,21 +84,21 @@ export class FetchSesonalEvents implements Action {
     }
 }
 
-// export class SetClanMembers implements Action {
-//     readonly type = SET_CLAN_MEMBERS;
+export class SetClanMembers implements Action {
+    readonly type = SET_CLAN_MEMBERS;
 
-//     constructor(public payload: EntityAdapter<ClanMember>) {
+    constructor(public payload: ClanMember[]) {
 
-//     }
-// }
+    }
+}
 
-// export class FetchClanMembers implements Action {
-//     readonly type = FETCH_CLAN_MEMBERS;
+export class FetchClanMembers implements Action {
+    readonly type = FETCH_CLAN_MEMBERS;
 
-//     constructor(public payload: string) {
+    constructor(public payload: string) {
 
-//     }
-// }
+    }
+}
 
 export class SetRuneMetricsProfile implements Action {
     readonly type = SET_RUNEMETRICS_PROFILE;
@@ -117,8 +118,8 @@ export class FetchRuneMetricsProfile implements Action {
 }
 
 export type HighscoreActions = 
-    // | FetchClanMembers
-    // | SetClanMembers
+    | FetchClanMembers
+    | SetClanMembers
     | FetchSesonalEvents
     | SetSesonalEvents
     | FetchSesonalEvents

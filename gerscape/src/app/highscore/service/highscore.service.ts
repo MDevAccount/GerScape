@@ -15,12 +15,13 @@ export class HighscoreService {
     public static URL_CLANMEMBERS = "services.runescape.com/m=clan-hiscores/members_lite.ws?clanName=#VAR#"
     public static URL_SESONAL_EVENTS = "http://services.runescape.com/m=temp-hiscores/getRankings.json?player=#VAR#&status=archived";
 
-    public static MAX_EP: 5400000000;
-    public static MAX_LEVEL: 2694;
-    public static COMP_LEVEL: 2778;
-    public static XP_AT_120: 104273167;
+    public static MAX_TOTAL_XP = 5400000000;
+    public static MAX_SKILL_XP = 200000000;
+    public static MAX_LEVEL = 2694;
+    public static COMP_LEVEL = 2778;
+    public static XP_AT_120 = 104273167;
 
-    public static SKILL_NAMES: [
+    public static SKILL_NAMES = [
         'Angriff',
         'Verteidigung',
         'Stärke',
@@ -49,8 +50,37 @@ export class HighscoreService {
         'Mystik',
         'Erfinden'];
 
-    skillXps: number[] = [];
+    static SKILL_ICONS = [
+        'attack',
+        'defence',
+        'strength',
+        'constitution',
+        'ranged',
+        'prayer',
+        'magic',
+        'cooking',
+        'woodcutting',
+        'fletching',
+        'fishing',
+        'firemaking',
+        'crafting',
+        'smithing',
+        'mining',
+        'herblore',
+        'agility',
+        'thieving',
+        'slayer',
+        'farming',
+        'runecrafting',
+        'hunter',
+        'construction',
+        'summoning',
+        'dungeoneering',
+        'divination',
+        'invention'];
 
+    skillXps: number[] = [];
+    
     constructor(
         private http: HttpClient) {
             this.createSkillXpArray();
@@ -63,11 +93,11 @@ export class HighscoreService {
     } 
     
 
-    public getVirtualLevelForXp(xp: number, trueVirtualLevel: boolean = false) {
+    public getLevelForXp(xp: number) {
         if (xp && xp > 0) {
             for (let level = 0; level < this.skillXps.length; level++) {
                 if (this.skillXps[level] > xp) {
-                    return (level > 120 && !trueVirtualLevel) ? 120 : level - 1;
+                    return level - 1;
                 }
             }
         }
@@ -91,10 +121,10 @@ export class HighscoreService {
             return false;
 
         if (rsData instanceof RuneMetricsProfile)
-            return rsData.totalxp == HighscoreService.MAX_EP;
+            return rsData.totalxp == HighscoreService.MAX_TOTAL_XP;
 
         if (rsData instanceof HighscoreLight)
-            return rsData.skills[0].xp == HighscoreService.MAX_EP;
+            return rsData.skills[0].xp == HighscoreService.MAX_TOTAL_XP;
     }
 
     hasCompLevel(rsData: RuneMetricsProfile | HighscoreLight) {
@@ -132,6 +162,24 @@ export class HighscoreService {
 
     isSkill120(xp: number) {
         return xp > HighscoreService.XP_AT_120;
+    }
+
+    getPercentOfNextLevel(xp: number) {
+        let currLevelXp = this.skillXps[this.getLevelForXp(xp)];
+        let nextLevelXp = this.skillXps[this.getNextLevel(xp)];
+        let difXpFromLevelToLevel = nextLevelXp - currLevelXp;
+        let xpProgress = xp - currLevelXp;
+        return (xp === HighscoreService.MAX_SKILL_XP) ? 100 :  Math.round(( xpProgress / difXpFromLevelToLevel) * 100);
+    }
+
+    getXpTillNextLevel(xp: number) {
+        if (this.getNextLevel(xp) == 126)
+            return HighscoreService.MAX_SKILL_XP - xp; 
+        return this.skillXps[this.getNextLevel(xp)] - xp;
+    }
+
+    getNextLevel(xp: number) {
+        return this.getLevelForXp(xp) + 1;
     }
 
 

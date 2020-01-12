@@ -10,7 +10,8 @@ export class HighscoreLight {
 }
 
 export class Skill {
-    constructor(    
+    constructor(   
+        public id: number, 
         public level: number,
         public xp:    number,
         public rank:  number) {

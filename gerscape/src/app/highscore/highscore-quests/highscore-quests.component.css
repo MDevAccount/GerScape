@@ -7,30 +7,6 @@
     padding-right: 10px;
 }
 
-.mat-column-icon {
-    width: 50px;
-    flex: none;
-}
-
-.mat-column-level {
-    width: 50px;
-    flex: none;
-}
-
-.mat-column-xp {
-    width: 75px;
-    flex: none;
-}
-
-.mat-column-rank {
-    width: 50px;
-    flex: initial;
-}
-
-.mat-column-xpProgress {
-    flex: auto;
-}
-
 table {
     width: 100%;
     max-width: 800px;
