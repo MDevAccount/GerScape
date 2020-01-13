@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
-import { switchMap, map, catchError } from 'rxjs/operators';
+import { switchMap, map, catchError, withLatestFrom } from 'rxjs/operators';
 import { of, throwError } from 'rxjs';
 import * as HighscoreActions  from './highscore.actions';
 import { HighscoreService } from '../service/highscore.service';
@@ -68,6 +68,7 @@ export class HighscoreEffects {
                             map(playerDetailsResponse => {
                                 let response = playerDetailsResponse.split("[")[1].split("]")[0];
                                 let playerDetails: PlayerDetails = JSON.parse(response);
+                                this.store.dispatch(new HighscoreActions.SetIsClanless(playerDetails.clan == ""));
                                 return new HighscoreActions.SetPlayerDetails(playerDetails);
                             }, 
                             catchError((questsError: QuestsError) => {
@@ -81,6 +82,15 @@ export class HighscoreEffects {
     fetchClanMembers = this.actions$
         .pipe(
             ofType(HighscoreActions.FETCH_CLAN_MEMBERS),
+            withLatestFrom(this.store.select('highscore')),
+            switchMap(([actionData , highscoreState]) => {
+                if (highscoreState.isClanless) {
+                    let action: HighscoreActions.FetchClanMembers = actionData;
+                    return throwError("Player " + action.payload + " is not in a clan!");
+                } else {
+                    return actionData;
+                }
+            }),
             switchMap((action: HighscoreActions.FetchClanMembers) => {
                 const playerName = action.payload;
                 const url = HighscoreService.URL_CLANMEMBERS;

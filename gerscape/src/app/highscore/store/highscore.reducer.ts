@@ -15,6 +15,7 @@ export interface State {
     sesonalEvents: SesonalEvent[],
     clanMembers: ClanMember[],
     isRuneMetricsProfilePrivate: boolean;
+    isClanless: boolean;
 }
 
 const initialState: State = {
@@ -24,7 +25,8 @@ const initialState: State = {
     playerDetails: null,
     sesonalEvents: null,
     clanMembers: null,
-    isRuneMetricsProfilePrivate: true
+    isRuneMetricsProfilePrivate: true,
+    isClanless: true
 };
 
 export function highscoreReducer(state = initialState, action: HighscoreActions.HighscoreActions) {

@@ -19,7 +19,7 @@ export class HighscoreClanComponent implements OnInit {
   @ViewChild(MatSort, {static:true}) sort: MatSort;
   displayedColumns: string[] = ['name', 'role', 'clanXp', 'kills'];
   dataSource = new MatTableDataSource<ClanMember>([]);
-  playerDetails;
+  isClanless = true;
 
   constructor(
     private store: Store<AppState>) {
@@ -30,10 +30,11 @@ export class HighscoreClanComponent implements OnInit {
     this.dataSource.sort = this.sort;
 
     this.store.select('highscore').subscribe(state => {
-      if (state.clanMembers)
-        this.dataSource.data = state.clanMembers;
-      if (state.playerDetails)
-        this.playerDetails = state.playerDetails;
+      this.isClanless = state.isClanless;
+
+      if (!state.isClanless)
+        if (state.clanMembers)
+          this.dataSource.data = state.clanMembers;
     });
   }
 
