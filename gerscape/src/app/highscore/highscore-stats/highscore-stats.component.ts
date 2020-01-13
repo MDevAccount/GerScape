@@ -20,6 +20,7 @@ export class HighscoreStatsComponent implements OnInit {
   skillIcons = HighscoreService.SKILL_ICONS;
   skillNames = HighscoreService.SKILL_NAMES;
   firstDataSourceCall = true;
+  smallScreen = false;
 
   constructor(
     private store: Store<AppState>,
@@ -31,19 +32,19 @@ export class HighscoreStatsComponent implements OnInit {
 
   ngOnInit() {
 
-    this.breakpointObserver.observe(['(max-width: 365px)']).subscribe(result => {
+    this.breakpointObserver.observe(['(max-width: 850px)']).subscribe(result => {
       this.displayedColumns = result.matches ? 
           ['icon', 'level', 'xp', 'rank'] : 
           ['icon', 'level', 'xp', 'xpProgress', 'rank'];
+      this.smallScreen = result.matches;
     });
 
     this.sort.sort(({ id: 'id', start: 'asc'}) as MatSortable);
     this.dataSource.sort = this.sort;
 
     this.store.select('highscore').subscribe(state => {
-      this.dataSource.data = state.highscoreLight.skills;
-    }, error => {
-      console.log(error);
+      if (state.highscoreLight)
+        this.dataSource.data = state.highscoreLight.skills;
     });
   }
 
@@ -57,5 +58,9 @@ export class HighscoreStatsComponent implements OnInit {
     return skillXp < HighscoreService.MAX_SKILL_XP ? 
       this.numberPipe.transform(xpTillnextLevel, "1.0-0") + " Ep bis Level (" + this.numberPipe.transform(nextLevel, "1.0-0") + ")"  :
       '';
+  }
+
+  getPercentToNextLevel(xp: number) {
+    return this.highscoreService.getPercentOfNextLevel(xp);
   }
 }

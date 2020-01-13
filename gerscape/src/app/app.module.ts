@@ -20,12 +20,12 @@ import { HighscoreStatsComponent } from './highscore/highscore-stats/highscore-s
 import { HeaderComponent } from './header/header.component';
 import { appReducer } from './store/app.reducer';
 
+import { HighscoreQuestsChartComponent } from './highscore/highscore-quests-chart/highscore-quests-chart.component';
 import { HighscoreQuestsComponent } from './highscore/highscore-quests/highscore-quests.component';
 import { HighscoreClanComponent } from './highscore/highscore-clan/highscore-clan.component';
 import { HighscoreActivitiesComponent } from './highscore/highscore-activities/highscore-activities.component';
 import { HighscoreSesonalEventsComponent } from './highscore/highscore-sesonal/highscore-sesonal.component';
-import { HighscoreOverviewComponent } from './highscore/highscore-overview/highscore-overview.component';
-import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { HighscoreStatsChartComponent } from './highscore/highscore-stats-chart/highscore-stats-chart.component';
 
 registerLocaleData(localeDe);
 
@@ -39,7 +39,8 @@ registerLocaleData(localeDe);
     HighscoreClanComponent,
     HighscoreActivitiesComponent,
     HighscoreSesonalEventsComponent,
-    HighscoreOverviewComponent,
+    HighscoreStatsChartComponent,
+    HighscoreQuestsChartComponent
   ],
   imports: [
     BrowserModule,
@@ -57,8 +58,6 @@ registerLocaleData(localeDe);
     MatProgressBarModule,
     MatTooltipModule,
     FlexLayoutModule,
-    FormsModule,
-    ReactiveFormsModule,
     NgApexchartsModule,
     EffectsModule.forRoot([HighscoreEffects]),
     StoreModule.forRoot(appReducer)

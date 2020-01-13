@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import { switchMap, map, catchError } from 'rxjs/operators';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import * as HighscoreActions  from './highscore.actions';
 import { HighscoreService } from '../service/highscore.service';
 import { HighscoreLight, Skill, Minigame } from 'src/app/highscore/model/highscore-light.model';
@@ -10,6 +10,8 @@ import { QuestResponse } from '../model/quest.model';
 import { PlayerDetails } from '../model/player-details.model';
 import { SesonalEvent } from '../model/sesonal-event.model';
 import { ClanMember, Role } from '../model/clanmember.model';
+import { AppState } from 'src/app/store/app.reducer';
+import { Store } from '@ngrx/store';
 
 
 interface RuneMetricsError {
@@ -28,7 +30,8 @@ export class HighscoreEffects {
 
     constructor(
         private actions$: Actions,
-        private highscoreService: HighscoreService) {
+        private highscoreService: HighscoreService,
+        private store: Store<AppState>) {
 
     }
 
@@ -46,7 +49,7 @@ export class HighscoreEffects {
                                 return new HighscoreActions.SetQuestResponse(questResponse);
                             }, 
                             catchError((questsError: QuestsError) => {
-                                return of(new HighscoreActions.SetQuestResponse(new QuestResponse([], ""))); 
+                                return of(new HighscoreActions.SetQuestResponse(null)); 
                             }))
                         )
             })
@@ -68,7 +71,7 @@ export class HighscoreEffects {
                                 return new HighscoreActions.SetPlayerDetails(playerDetails);
                             }, 
                             catchError((questsError: QuestsError) => {
-                                return of(new HighscoreActions.SetPlayerDetails(new PlayerDetails(false, false, "", "", ""))); 
+                                return of(new HighscoreActions.SetPlayerDetails(null)); 
                             }))
                         )
             })
@@ -99,7 +102,7 @@ export class HighscoreEffects {
                             }, 
                             catchError(error  => {
                                 console.log("error: " + error);
-                                return of(new HighscoreActions.SetClanMembers([])); 
+                                return of(new HighscoreActions.SetClanMembers(null)); 
                             }))
                         )
             })
@@ -119,7 +122,7 @@ export class HighscoreEffects {
                                 return new HighscoreActions.SetSesonalEvents(sesonalEventsResponse);
                             }, 
                             catchError(error => {
-                                return of(new HighscoreActions.SetSesonalEvents([])); 
+                                return of(new HighscoreActions.SetSesonalEvents(null)); 
                             }))
                         )
             })
@@ -136,16 +139,23 @@ export class HighscoreEffects {
                     .createHttpGetRequest<RuneMetricsProfile>(playerName, url)
                         .pipe(
                             map(runeMetricsProfileResponse => {
-                                //Remove last diggit here because its nachkommastelle and our pipe will fuck it up 
-                                let toStr = "";
-                                runeMetricsProfileResponse.skillvalues.forEach((skillValue, index, theArr) => {
-                                    toStr = "" + skillValue.xp;
-                                    theArr[index].xp = +toStr.substr(0, toStr.length - 1);
-                                });
-                                return new HighscoreActions.SetRuneMetricsProfile(runeMetricsProfileResponse);
+                                if (!runeMetricsProfileResponse.skillvalues) {
+                                    this.store.dispatch(new HighscoreActions.SetIsRuneMetricsProfilePrivate(true));
+                                    return new HighscoreActions.SetRuneMetricsProfile(null); 
+                                } else {
+                                    this.store.dispatch(new HighscoreActions.SetIsRuneMetricsProfilePrivate(false));
+                                    //Remove last diggit here because its nachkommastelle and our pipe will fuck it up 
+                                    let toStr = "";
+                                    console.log(runeMetricsProfileResponse);
+                                    runeMetricsProfileResponse.skillvalues.forEach((skillValue, index, theArr) => {
+                                        toStr = "" + skillValue.xp;
+                                        theArr[index].xp = +toStr.substr(0, toStr.length - 1);
+                                    });
+                                    return new HighscoreActions.SetRuneMetricsProfile(runeMetricsProfileResponse);
+                                }
                             }, 
                             catchError((runeMetricsError: RuneMetricsError) => {
-                                return of(new HighscoreActions.SetRuneMetricsProfile(new RuneMetricsProfile(0, 0, 0, 0, 0, 0, 0, [], [], "", "", 0, 0, ""))); 
+                                return of(new HighscoreActions.SetRuneMetricsProfile(null)); 
                             }))
                         )
             })
@@ -162,7 +172,7 @@ export class HighscoreEffects {
                     .createHttpGetRequest<string>(playerName, url, true)
                         .pipe(
                             map(strResponse => {
-                                let highscoreLight = new HighscoreLight(0, 0, 0, [], []);
+                                let highscoreLight = new HighscoreLight("", 0, 0, 0, 0, [], []);
                                 strResponse.split('\n').forEach((skillData, index) => {
                                     const skillProperty = skillData.split(",");
                                     if (index == 0) {
@@ -175,129 +185,26 @@ export class HighscoreEffects {
                                         highscoreLight.minigames.push(new Minigame(+skillProperty[1], + skillProperty[0]));
                                     }    
                                 });
+                                let combatLevel = HighscoreService.getCombatLevel(
+                                    highscoreLight.skills[0].level,
+                                    highscoreLight.skills[2].level,
+                                    highscoreLight.skills[6].level,
+                                    highscoreLight.skills[4].level,
+                                    highscoreLight.skills[1].level,
+                                    highscoreLight.skills[3].level,
+                                    highscoreLight.skills[5].level,
+                                    highscoreLight.skills[23].level
+                                );
+                                highscoreLight.combatLevel = combatLevel;
+                                highscoreLight.name = playerName;
                                 return new HighscoreActions.SetHighscoreLight(highscoreLight);
                             }, 
                             catchError(error => {
-                                return of(new HighscoreActions.SetHighscoreLight(new HighscoreLight(0, 0, 0, [], []))); 
+                                return of(new HighscoreActions.SetHighscoreLight(null)); 
                             }))
                         )
             })
         );
-
-    
-    // private createRunescapeProfileLight(playerName: string, highscoreLightData: HighscoreLightData) : RunescapeProfile {
-    //     let runescapeProfile = new RunescapeProfile(
-    //         "",
-    //         0,
-    //         0,
-    //         0,
-    //         0,
-    //         0,
-    //         0,
-    //         0,
-    //         0,
-    //         0,
-    //         new Clan("", false, "", []),
-    //         [],
-    //         [],
-    //         [],
-    //         [] 
-    //     );
-
-    //     let skills: Skill[] = [];
-
-    //     highscoreLightData.data.split('/n').forEach((skillString, skillIndex) => {
-
-    //         let skill = new Skill(
-    //             skillIndex - 1,
-    //             RunescapeProfile[skillIndex - 1].name,
-    //             0,
-    //             0,
-    //             0,
-    //             0,
-    //             0
-    //         );
-
-    //         skillString.split(',').forEach((skillData, splitIndex)   => {
-    //             if (skillIndex == 0 ) {
-    //                 if (splitIndex == 0) {
-    //                     runescapeProfile.totalRank;
-    //                 }           
-    //                 if (splitIndex == 1) {
-    //                     runescapeProfile.totalLevel;
-    //                 }                   
-    //                 if (splitIndex == 2) {
-    //                     runescapeProfile.totalXp;
-    //                 }
-    //             } else if (splitIndex == 0) {
-    //                 skill.rank = +skillData;
-    //             } else if (splitIndex == 1) {
-    //                 skill.level = +skillData;
-    //                 skill.virtualLevel = this.highscoreService.getVirtualLevelForXp(skill.level, false),
-    //                 skill.virtualLevelNoLimit = this.highscoreService.getVirtualLevelForXp(skill.level, true)
-    //             } else if (splitIndex == 2) {
-    //                 skill.xp = +skillData;
-    //             }
-    //         })
-
-    //         skills.push(skill);
-    //     })
-
-    //     runescapeProfile.name = playerName;
-    //     runescapeProfile.skills = skills;
-    //     runescapeProfile.virtualTotalLevel = skills.reduce((sum, skill) => sum += skill.virtualLevel, 0);
-    //     runescapeProfile.virtualTotalLevelNoLimit = skills.reduce((sum, skill) => sum += skill.virtualLevelNoLimit, 0);
-        
-    //     console.log(runescapeProfile);
-    //     return runescapeProfile;
-    // }
-    
-    // private createRunescapeProfile(runeMetricsData: RuneMetricsData) : RunescapeProfile {
-    //     //TODO -> erfinden seperat virtuelle lvl getten
-
-    //     let skills: Skill[] = [];
-    //     runeMetricsData.skillvalues.forEach(skill => {
-    //         skills.push(new Skill(
-    //             skill.id,
-    //             RunescapeProfile[skill.id].name,
-    //             skill.xp,
-    //             skill.rank,
-    //             skill.level,
-    //             this.highscoreService.getVirtualLevelForXp(skill.xp, false),
-    //             this.highscoreService.getVirtualLevelForXp(skill.xp, true)
-    //         ));
-    //     });
-
-    //     let activities: Activity[] = [];
-    //     runeMetricsData.activities.forEach(activity => {
-    //         activities.push(new Activity(
-    //             new Date(activity.date),
-    //             activity.details,
-    //             activity.text
-    //         ));
-    //     });
-
-    //     let runescapeProfile = new RunescapeProfile(
-    //         runeMetricsData.name,
-    //         +runeMetricsData.rank.replace(',', ''),
-    //         runeMetricsData.totalxp,
-    //         runeMetricsData.totalskill,
-    //         skills.reduce((sum, skill) => sum += skill.virtualLevel, 0),
-    //         skills.reduce((sum, skill) => sum += skill.virtualLevelNoLimit, 0),
-    //         runeMetricsData.combatlevel,
-    //         runeMetricsData.questsstarted,
-    //         runeMetricsData.questsnotstarted,
-    //         runeMetricsData.questscomplete,
-    //         new Clan("", false, "", []),
-    //         [],
-    //         [],
-    //         skills,
-    //         activities 
-    //     );
-
-    //     console.log(runescapeProfile);
-    //     return runescapeProfile;
-    // }
 
 
 }

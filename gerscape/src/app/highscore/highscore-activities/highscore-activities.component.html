@@ -19,7 +19,13 @@
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 </table>
 
-<mat-card *ngIf="!(this.dataSource.data.length > 0)">
+<mat-card *ngIf="!(this.dataSource.data.length > 0) && !isRuneMetricsProfilePrivate">
   <mat-spinner>
   </mat-spinner>
+</mat-card>
+
+<mat-card *ngIf="isRuneMetricsProfilePrivate">
+    <p>
+        Der Spieler hat sein RuneMetrics Profil auf privat gestellt :(
+    </p>
 </mat-card>

@@ -14,7 +14,8 @@ export class HighscoreSesonalEventsComponent implements OnInit {
   @ViewChild(MatSort, {static:true}) sort: MatSort;
   displayedColumns: string[] = ['startDate', 'endDate', 'title', 'score_raw', 'rank'];
   dataSource = new MatTableDataSource<SesonalEvent>([]);
-
+  isRuneMetricsProfilePrivate = false;
+  
   constructor(
     private store: Store<AppState>) {
 
@@ -24,7 +25,9 @@ export class HighscoreSesonalEventsComponent implements OnInit {
     this.dataSource.sort = this.sort;
 
     this.store.select('highscore').subscribe(state => {
-      this.dataSource.data = state.sesonalEvents;
+      if (state.sesonalEvents)
+        this.dataSource.data = state.sesonalEvents;
+      this.isRuneMetricsProfilePrivate = state.isRuneMetricsProfilePrivate;
     });
   }
 

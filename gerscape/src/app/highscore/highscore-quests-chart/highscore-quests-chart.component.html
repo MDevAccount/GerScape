@@ -1,0 +1,30 @@
+<apx-chart 
+    [chart]="{
+        show: hasBeenLoaded,
+        type: 'radialBar', 
+        height: 275,
+        offsetY: -25,
+        foreColor: '#FFFFFF',
+        fontFamily: 'El Messiri',
+        animations: {
+            enabled: true,
+            speed: 2500
+        }
+    }"
+    [stroke]="{lineCap: 'round'}"
+    [colors]="['#43E226', '#00C86D', '#00AA8F']"
+    [series]="series"
+    [labels]="labels"
+    [plotOptions]="plotOptions"
+    [grid]="{
+        padding: {
+            left: 0,
+            right: 0
+        }
+    }">
+</apx-chart>
+
+<mat-card *ngIf="!series">
+  <mat-spinner>
+  </mat-spinner>
+</mat-card>

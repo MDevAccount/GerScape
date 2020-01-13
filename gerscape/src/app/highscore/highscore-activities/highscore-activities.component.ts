@@ -13,6 +13,7 @@ export class HighscoreActivitiesComponent implements OnInit {
   @ViewChild(MatSort, {static:true}) sort: MatSort;
   displayedColumns: string[] = ['date', 'text', 'details'];
   dataSource = new MatTableDataSource<Activity>([]);
+  isRuneMetricsProfilePrivate = false;
 
   constructor(
     private store: Store<AppState>) {
@@ -23,7 +24,9 @@ export class HighscoreActivitiesComponent implements OnInit {
     this.dataSource.sort = this.sort;
 
     this.store.select('highscore').subscribe(state => {
-      this.dataSource.data = state.runemetricsProfile.activities;
+      if (state.runemetricsProfile) 
+        this.dataSource.data = state.runemetricsProfile.activities;
+      this.isRuneMetricsProfilePrivate = state.isRuneMetricsProfilePrivate;
     });
   }
 

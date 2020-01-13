@@ -13,7 +13,7 @@ export class HighscoreQuestsComponent implements OnInit {
   @ViewChild(MatSort, {static:true}) sort: MatSort;
   displayedColumns: string[] = ['title', 'status', 'difficulty', 'members', 'questPoints'];
   dataSource = new MatTableDataSource<Quest>([]);
-
+  isRuneMetricsProfilePrivate = false;
 
   constructor(
     private store: Store<AppState>) {
@@ -24,7 +24,9 @@ export class HighscoreQuestsComponent implements OnInit {
     this.dataSource.sort = this.sort;
 
     this.store.select('highscore').subscribe(state => {
-      this.dataSource.data = state.questResponse.quests;
+      if (state.questResponse) 
+        this.dataSource.data = state.questResponse.quests;
+        this.isRuneMetricsProfilePrivate = state.isRuneMetricsProfilePrivate;
     });
   }
 

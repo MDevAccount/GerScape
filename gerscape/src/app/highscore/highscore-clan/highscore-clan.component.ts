@@ -30,8 +30,10 @@ export class HighscoreClanComponent implements OnInit {
     this.dataSource.sort = this.sort;
 
     this.store.select('highscore').subscribe(state => {
-      this.dataSource.data = state.clanMembers;
-      this.playerDetails = state.playerDetails;
+      if (state.clanMembers)
+        this.dataSource.data = state.clanMembers;
+      if (state.playerDetails)
+        this.playerDetails = state.playerDetails;
     });
   }
 

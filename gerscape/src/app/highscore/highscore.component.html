@@ -1,81 +1,100 @@
-<div class="flex-container" fxLayoutGap="10px" fxLayout="row">
-  <mat-card>
-    <app-highscore-overview></app-highscore-overview>
-  </mat-card>
-  <mat-card class="root-highscore-card-right">
-    <mat-card-title>
-      <div class="container">
-        <div class="flex-container" fxLayoutGap="10px" fxLayout="row">
-          <mat-card>
-            <mat-card-title>
-              Gesamtstufe
-            </mat-card-title>
-            <mat-card-subtitle>
-              {{totalLevel ? totalLevel : ''}}   
-            </mat-card-subtitle>
-          </mat-card>
-          <mat-card>
-            <mat-card-title>
-              Erfahrungspunkte
-            </mat-card-title>
-            <mat-card-subtitle>
-              {{totalXp ? (totalXp | number): ''}}
-            </mat-card-subtitle>
-          </mat-card>
-          <mat-card>
-            <mat-card-title>
-              Kampfstufe
-            </mat-card-title>
-            <mat-card-subtitle>
-              {{combatLevel ? combatLevel : ''}}
-            </mat-card-subtitle>
-          </mat-card>
-        </div>
-      </div>
-    </mat-card-title>
-    <mat-card-content>
-      <mat-card>
-        <mat-card-title>
-          <mat-tab-group animationDuration="500ms">
-            <mat-tab label="Fertigkeiten">
-              <mat-card>
-                <mat-card-content>
-                  <app-highscore-stats></app-highscore-stats>
-                </mat-card-content>
-              </mat-card>
-            </mat-tab>
-            <mat-tab label="Letzte Aktivitäten">
-              <mat-card>
-                <mat-card-content>
-                  <app-highscore-activities></app-highscore-activities>
-                </mat-card-content>
-              </mat-card>
-            </mat-tab>
-            <mat-tab label="Abenteuer">
-              <mat-card>
-                <mat-card-content>
-                  <app-highscore-quests></app-highscore-quests>
-                </mat-card-content>
-              </mat-card>
-            </mat-tab>
-            <mat-tab label="Sesonale Liste">
-              <mat-card>
-                <mat-card-content>
-                  <app-highscore-sesonal></app-highscore-sesonal>
-                </mat-card-content>
-              </mat-card>
-            </mat-tab>
-            <mat-tab label="Clan">
-              <mat-card>
-                <mat-card-content>
-                  <app-highscore-clan></app-highscore-clan>
-                </mat-card-content>
-              </mat-card>
-            </mat-tab>
-          </mat-tab-group>
-        </mat-card-title>
-      </mat-card>
-    </mat-card-content>
-  </mat-card>
-  
+<div gdGap="10px" gdAreas="empty-top-left  player-info  player-info | left-side-charts highscore highscore">
+  <div gdarea="empty-top-left">
+    <!-- LOGO -->
+  </div>
+  <div gdArea="player-info" div fxLayout="row" fxLayoutAlign="start" fxLayoutGap="10px" style="min-width: 200px;">
+    <mat-card>
+      <mat-card-title>
+        <img 
+          [src]="avatarUrl" 
+          height="96" 
+          width="96">
+      </mat-card-title>
+    </mat-card>
+    <mat-card>
+      <mat-card-title>
+        Gesamtstufe
+      </mat-card-title>
+      <mat-card-subtitle>
+        {{totalLevel ? totalLevel : '-'}}   
+      </mat-card-subtitle>
+    </mat-card>
+    <mat-card>
+      <mat-card-title>
+        Erfahrungspunkte
+      </mat-card-title>
+      <mat-card-subtitle>
+        {{totalXp ? (totalXp | number): '-'}}
+      </mat-card-subtitle>
+    </mat-card>
+    <mat-card>
+      <mat-card-title>
+        Kampfstufe
+      </mat-card-title>
+      <mat-card-subtitle>
+        {{combatLevel ? (combatLevel  | number:'1.0-0'): '-'}}
+      </mat-card-subtitle>
+    </mat-card>
+  </div>
+  <div gdArea="left-side-charts" fxLayoutGap="10px" div fxLayout="column" fxLayoutAlign="start end">
+    <mat-card style="height: 230px; width: 200px;">
+      <mat-card-title style="text-align: center;">
+        Fertigkeiten
+      </mat-card-title>
+      <mat-card-content>
+        <app-highscore-stats-chart></app-highscore-stats-chart>
+      </mat-card-content>
+    </mat-card>
+    <mat-card style="height: 230px; width: 200px;">
+      <mat-card-title style="text-align: center;">
+        Abenteuer
+      </mat-card-title>
+      <mat-card-content>
+        <app-highscore-quests-chart></app-highscore-quests-chart>
+      </mat-card-content>
+    </mat-card>
+  </div>
+  <div gdArea="highscore" style="min-height: 1000px; max-width: 850px; min-width: 200px;">
+    <mat-card>
+      <mat-card-title>
+        <mat-tab-group animationDuration="500ms">
+          <mat-tab label="Fertigkeiten">
+            <mat-card>
+              <mat-card-content>
+                <app-highscore-stats></app-highscore-stats>
+              </mat-card-content>
+            </mat-card>
+          </mat-tab>
+          <mat-tab label="Letzte Aktivitäten">
+            <mat-card>
+              <mat-card-content>
+                <app-highscore-activities></app-highscore-activities>
+              </mat-card-content>
+            </mat-card>
+          </mat-tab>
+          <mat-tab label="Abenteuer">
+            <mat-card>
+              <mat-card-content>
+                <app-highscore-quests></app-highscore-quests>
+              </mat-card-content>
+            </mat-card>
+          </mat-tab>
+          <mat-tab label="Sesonale Liste">
+            <mat-card>
+              <mat-card-content>
+                <app-highscore-sesonal></app-highscore-sesonal>
+              </mat-card-content>
+            </mat-card>
+          </mat-tab>
+          <mat-tab label="Clan">
+            <mat-card>
+              <mat-card-content>
+                <app-highscore-clan></app-highscore-clan>
+              </mat-card-content>
+            </mat-card>
+          </mat-tab>
+        </mat-tab-group>
+      </mat-card-title>
+    </mat-card>
+  </div>
 </div>

@@ -1,8 +1,10 @@
 export class HighscoreLight {
     constructor(
+        public name: string,
         public totalXp: number,
         public totalLevel: number,
         public totalRank: number,
+        public combatLevel: number,
         public skills: Skill[],
         public minigames: Minigame[]) {
 

@@ -14,6 +14,7 @@ export class HighscoreService {
     public static URL_PLAYER_DETAILS = "http://services.runescape.com/m=website-data/playerDetails.ws?names=%5B%22#VAR#%22%5D&callback=jQuery000000000000000_0000000000&_=0";
     public static URL_CLANMEMBERS = "services.runescape.com/m=clan-hiscores/members_lite.ws?clanName=#VAR#"
     public static URL_SESONAL_EVENTS = "http://services.runescape.com/m=temp-hiscores/getRankings.json?player=#VAR#&status=archived";
+    public static URL_PLAYER_AVATAR_IMAGE = "http://secure.runescape.com/m=avatar-rs/#VAR#/chat.png"
 
     public static MAX_TOTAL_XP = 5400000000;
     public static MAX_SKILL_XP = 200000000;
@@ -21,6 +22,7 @@ export class HighscoreService {
     public static COMP_LEVEL = 2778;
     public static ALL_120_TOTAL_LEVEL = 3240;
     public static XP_AT_120 = 104273167;
+    public static SKILL_AMOUNT = 27;
 
     public static SKILL_NAMES = [
         'Angriff',
@@ -184,6 +186,20 @@ export class HighscoreService {
 
     getNextLevel(xp: number) {
         return this.getLevelForXp(xp) + 1;
+    }
+
+    static getCombatLevel(
+        attack: number, 
+        strength: number, 
+        mage: number, 
+        range: number, 
+        defence: number, 
+        constitution: number, 
+        prayer: number, 
+        summoning: number) {
+
+        let arr = [(attack + strength), (2 * mage), (2 * range)];
+        return (13/10 * Math.max(...arr) + defence + constitution + ((1/2) * prayer) + ((1/2) * summoning)) / 4;
     }
 
 

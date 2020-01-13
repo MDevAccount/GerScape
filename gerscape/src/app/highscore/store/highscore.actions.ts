@@ -18,7 +18,8 @@ export const FETCH_CLAN_MEMBERS = "[Highscore] Fetch clan members";
 export const FETCH_SESONAL_EVENTS = "[Highscore] Fetch sesonal events";
 export const FETCH_HIGHSCORE_LIGHT = "[Highscore] Fetch highscore light";
 export const FETCH_QUESTS = "[Highscore] Fetch quests";
-export const FETCH_RUNEMETRICS_PROFILE = "[Highscore] Fetch runemetrics profile"
+export const FETCH_RUNEMETRICS_PROFILE = "[Highscore] Fetch runemetrics profile";
+export const SET_IS_RUNEMETRICS_PROFILE_PRIVATE = "[Highscore] Set is runemetrics profile private";
 
 export class SetHighscoreLight implements Action {
     readonly type = SET_HIGHSCORE_LIGHT;
@@ -32,6 +33,14 @@ export class FetchHighscoreLight implements Action {
     readonly type = FETCH_HIGHSCORE_LIGHT;
     
     constructor(public payload: string) {
+
+    }
+}
+
+export class SetIsRuneMetricsProfilePrivate implements Action {
+    readonly type = SET_IS_RUNEMETRICS_PROFILE_PRIVATE;
+    
+    constructor(public payload: boolean) {
 
     }
 }
@@ -130,5 +139,6 @@ export type HighscoreActions =
     | SetHighscoreLight
     | FetchHighscoreLight
     | FetchRuneMetricsProfile
-    | SetRuneMetricsProfile;
+    | SetRuneMetricsProfile
+    | SetIsRuneMetricsProfilePrivate;
 

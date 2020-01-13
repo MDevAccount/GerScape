@@ -13,16 +13,18 @@ export interface State {
     highscoreLight: HighscoreLight,
     playerDetails: PlayerDetails,
     sesonalEvents: SesonalEvent[],
-    clanMembers: ClanMember[]
+    clanMembers: ClanMember[],
+    isRuneMetricsProfilePrivate: boolean;
 }
 
 const initialState: State = {
-    runemetricsProfile: new RuneMetricsProfile(0, 0, 0, 0, 0, 0, 0, [], [], "", "", 0, 0, ""),
-    questResponse: new QuestResponse([], ""),
-    highscoreLight: new HighscoreLight(0, 0, 0, [], []),
-    playerDetails: new PlayerDetails(false, false, "", "", ""),
-    sesonalEvents: [],
-    clanMembers: []
+    runemetricsProfile: null,
+    questResponse: null,
+    highscoreLight: null,
+    playerDetails: null,
+    sesonalEvents: null,
+    clanMembers: null,
+    isRuneMetricsProfilePrivate: true
 };
 
 export function highscoreReducer(state = initialState, action: HighscoreActions.HighscoreActions) {
@@ -64,7 +66,12 @@ export function highscoreReducer(state = initialState, action: HighscoreActions.
                 ...state,
                 clanMembers: action.payload
             };
-
+        
+        case HighscoreActions.SET_IS_RUNEMETRICS_PROFILE_PRIVATE:
+            return {
+                ...state,
+                isRuneMetricsProfilePrivate: action.payload
+            }
         default:
             return state;
     }
