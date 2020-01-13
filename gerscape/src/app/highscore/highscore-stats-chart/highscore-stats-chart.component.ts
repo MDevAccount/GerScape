@@ -1,10 +1,8 @@
-import { OnInit, Component, ViewChild, Input } from '@angular/core';
-import { ChartComponent, ApexAxisChartSeries, ApexNonAxisChartSeries } from 'ng-apexcharts';
+import { OnInit, Component } from '@angular/core';
 import { HighscoreService } from '../service/highscore.service';
 import { AppState } from 'src/app/store/app.reducer';
 import { Store } from '@ngrx/store';
-import { FormGroup, FormControl, FormArray } from '@angular/forms';
-import { Skillvalue, RuneMetricsProfile } from '../model/runemetrics-profile.model';
+import { Skillvalue } from '../model/runemetrics-profile.model';
 import { Skill } from '../model/highscore-light.model';
 
 @Component({
@@ -65,7 +63,7 @@ export class HighscoreStatsChartComponent implements OnInit {
                     this.series = [];
                     this.labels = [];
                     this.labels.push("ALLES 99");
-                    this.labels.push("COMP Stats");
+                    this.labels.push("COMP STATS");
                     this.labels.push("ALLES 120");
                     this.labels.push("ALLES 200M");
                     if (state.highscoreLight) {
@@ -106,7 +104,6 @@ export class HighscoreStatsChartComponent implements OnInit {
             requiredLevel99s = skillValues.filter(skill => !the120Ids[skill.id] && skill.level >= 99).length;
             requiredLevel120s = skillValues.filter(skill => the120Ids[skill.id] && this.highscoreService.isSkill120(skill.xp)).length;
         }
-        console.log(requiredLevel120s + " " + requiredLevel99s);
         return this.getPercentOfAndMax100(requiredLevel99s + requiredLevel120s, HighscoreService.SKILL_AMOUNT);
     }
 

@@ -68,7 +68,6 @@ export class HighscoreEffects {
                             map(playerDetailsResponse => {
                                 let response = playerDetailsResponse.split("[")[1].split("]")[0];
                                 let playerDetails: PlayerDetails = JSON.parse(response);
-                                this.store.dispatch(new HighscoreActions.SetIsClanless(playerDetails.clan == ""));
                                 return new HighscoreActions.SetPlayerDetails(playerDetails);
                             }, 
                             catchError((questsError: QuestsError) => {
@@ -82,33 +81,28 @@ export class HighscoreEffects {
     fetchClanMembers = this.actions$
         .pipe(
             ofType(HighscoreActions.FETCH_CLAN_MEMBERS),
-            withLatestFrom(this.store.select('highscore')),
-            switchMap(([actionData , highscoreState]) => {
-                if (highscoreState.isClanless) {
-                    let action: HighscoreActions.FetchClanMembers = actionData;
-                    return throwError("Player " + action.payload + " is not in a clan!");
-                } else {
-                    return actionData;
-                }
-            }),
             switchMap((action: HighscoreActions.FetchClanMembers) => {
-                const playerName = action.payload;
+                const clanName = action.payload;
                 const url = HighscoreService.URL_CLANMEMBERS;
                 return this.highscoreService
-                    .createHttpGetRequest<string>(playerName, url, true)
+                    .createHttpGetRequest<string>(clanName, url, true)
                         .pipe(
                             map(strResponse => {
-                                let clanMembers: ClanMember[] = [];
-                                let role;
-                                strResponse.split('\n').forEach((clanMember, index) => {
-                                    const clanMemberProperty = clanMember.split(",");
-                                    if (index > 0) {
-                                        role = Object.keys(Role).filter(k => k == clanMemberProperty[1]);
-                                        //role = Object.keys(Role).filter(role => role == clanMemberProperty[1]);
-                                        clanMembers.push(new ClanMember(clanMemberProperty[0], role, +clanMemberProperty[2], +clanMemberProperty[3]));
-                                    } 
-                                });
-                                return new HighscoreActions.SetClanMembers(clanMembers);
+                                if (!strResponse.startsWith("Clanmate, Clan Rank, Total XP, Kills")) {
+                                    return new HighscoreActions.SetClanMembers(null);
+                                } else {
+                                    let clanMembers: ClanMember[] = [];
+                                    let role;
+                                    strResponse.split('\n').forEach((clanMember, index) => {
+                                        const clanMemberProperty = clanMember.split(",");
+                                        if (index > 0) {
+                                            role = Object.keys(Role).filter(k => k == clanMemberProperty[1]);
+                                            //role = Object.keys(Role).filter(role => role == clanMemberProperty[1]);
+                                            clanMembers.push(new ClanMember(clanMemberProperty[0], role, +clanMemberProperty[2], +clanMemberProperty[3]));
+                                        } 
+                                    });
+                                    return new HighscoreActions.SetClanMembers(clanMembers);
+                                }
                             }, 
                             catchError(error  => {
                                 console.log("error: " + error);

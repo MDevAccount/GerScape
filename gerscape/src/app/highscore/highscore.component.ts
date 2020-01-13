@@ -2,7 +2,6 @@ import {Component, OnInit} from '@angular/core';
 import { AppState } from '../store/app.reducer';
 import { Store } from '@ngrx/store';
 import { FetchRuneMetricsProfile, FetchSesonalEvents, FetchHighscoreLight, FetchPlayerDetails, FetchQuests, FetchClanMembers } from './store/highscore.actions';
-import { RuneMetricsProfile } from './model/runemetrics-profile.model';
 import { HighscoreService } from './service/highscore.service';
 
 @Component({
@@ -29,7 +28,7 @@ export class HighscoreComponent implements OnInit {
         this.store.dispatch(new FetchPlayerDetails("blaueshemd"));
         this.store.dispatch(new FetchQuests("blaueshemd"));
         this.store.dispatch(new FetchSesonalEvents("blaueshemd"));
-        this.store.dispatch(new FetchClanMembers(""));
+        this.store.dispatch(new FetchClanMembers("blaueshemd"));
 
         this.store.select('highscore').subscribe(state => {
             this.isRuneMetricsProfilePrivate = state.isRuneMetricsProfilePrivate;

@@ -45,7 +45,7 @@
         <app-highscore-stats-chart></app-highscore-stats-chart>
       </mat-card-content>
     </mat-card>
-    <mat-card style="height: 230px; width: 200px;">
+    <mat-card *ngIf="!isRuneMetricsProfilePrivate" style="height: 230px; width: 200px;">
       <mat-card-title style="text-align: center;">
         Abenteuer
       </mat-card-title>

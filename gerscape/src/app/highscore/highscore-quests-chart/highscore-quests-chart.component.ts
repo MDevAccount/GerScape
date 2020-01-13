@@ -37,6 +37,7 @@ export class HighscoreQuestsChartComponent implements OnInit {
             }
         }
     }
+    
     constructor(private store: Store<AppState>) {
 
     }
@@ -58,8 +59,8 @@ export class HighscoreQuestsChartComponent implements OnInit {
                         this.series = [];
                         this.labels = [];
                         this.labels.push("ERLEDIGT");
-                        this.labels.push("BEGONNEN");
-                        this.labels.push("NICHT BEGONNEN");
+                        this.labels.push("GESTARTET");
+                        this.labels.push("NICHT GESTARTET");
     
                         questsDone = state.questResponse.quests.filter(quest => quest.status == Status.Completed).length;
                         questsStarted = state.questResponse.quests.filter(quest => quest.status == Status.Started).length;

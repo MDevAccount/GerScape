@@ -1,12 +1,11 @@
 import {Component, ViewChild, OnInit} from '@angular/core';
 import { MatSort, MatTableDataSource, MatSortable } from '@angular/material';
-import { Skillvalue, RuneMetricsProfile } from '../model/runemetrics-profile.model';
 import { AppState } from 'src/app/store/app.reducer';
 import { Store } from '@ngrx/store';
 import { HighscoreService } from '../service/highscore.service';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { DecimalPipe } from '@angular/common';
-import { HighscoreLight, Skill } from '../model/highscore-light.model';
+import { Skill } from '../model/highscore-light.model';
 
 @Component({
   selector: 'app-highscore-stats',

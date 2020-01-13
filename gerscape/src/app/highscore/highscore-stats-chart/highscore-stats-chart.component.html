@@ -1,6 +1,6 @@
-<apx-chart 
+<apx-chart *ngIf="hasBeenLoaded"
     [chart]="{
-        show: hasBeenLoaded,
+        show: false,
         type: 'radialBar', 
         height: 275,
         offsetY: -25,
@@ -24,7 +24,7 @@
     }">
 </apx-chart>
 
-<mat-card *ngIf="!series">
-  <mat-spinner>
+<div class="mat-spinner-div">
+  <mat-spinner *ngIf="!hasBeenLoaded">
   </mat-spinner>
-</mat-card>
+</div>

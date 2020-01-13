@@ -1,0 +1,6 @@
+.mat-spinner-div {
+    display: flex; 
+    justify-content: center; 
+    align-items: center;
+    height: 175px;
+}

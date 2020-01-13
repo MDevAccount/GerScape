@@ -1,6 +1,5 @@
 import {Component, ViewChild, OnInit} from '@angular/core';
 import { MatSort, MatTableDataSource } from '@angular/material';
-import { Activity } from '../model/runemetrics-profile.model';
 import { AppState } from 'src/app/store/app.reducer';
 import { Store } from '@ngrx/store';
 import { SesonalEvent } from '../model/sesonal-event.model';
