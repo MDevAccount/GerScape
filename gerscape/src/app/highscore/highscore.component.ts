@@ -13,6 +13,7 @@ export class HighscoreComponent implements OnInit {
     totalLevel;
     totalXp;
     combatLevel;
+    rank;
     playerName;
     avatarUrl = "./assets/img/default_chat.png";
     isRuneMetricsProfilePrivate = true;
@@ -23,12 +24,12 @@ export class HighscoreComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.store.dispatch(new FetchRuneMetricsProfile("blaueshemd"));
-        this.store.dispatch(new FetchHighscoreLight("blaueshemd"));
-        this.store.dispatch(new FetchPlayerDetails("blaueshemd"));
-        this.store.dispatch(new FetchQuests("blaueshemd"));
-        this.store.dispatch(new FetchSesonalEvents("blaueshemd"));
-        this.store.dispatch(new FetchClanMembers("blaueshemd"));
+        this.store.dispatch(new FetchRuneMetricsProfile("mischa"));
+        this.store.dispatch(new FetchHighscoreLight("mischa"));
+        this.store.dispatch(new FetchPlayerDetails("mischa"));
+        this.store.dispatch(new FetchQuests("mischa"));
+        this.store.dispatch(new FetchSesonalEvents("mischa"));
+        this.store.dispatch(new FetchClanMembers("suchtlurche"));
 
         this.store.select('highscore').subscribe(state => {
             this.isRuneMetricsProfilePrivate = state.isRuneMetricsProfilePrivate;
@@ -36,12 +37,14 @@ export class HighscoreComponent implements OnInit {
                 this.combatLevel = state.runemetricsProfile.combatlevel;
                 this.totalLevel = state.runemetricsProfile.totalskill;
                 this.totalXp = state.runemetricsProfile.totalxp;
+                this.rank = state.runemetricsProfile.rank;
                 this.playerName = state.runemetricsProfile.name;
                 this.avatarUrl = HighscoreService.URL_PLAYER_AVATAR_IMAGE.replace("#VAR#", state.runemetricsProfile.name);
             } else if (state.highscoreLight) {
                 this.combatLevel = state.highscoreLight.combatLevel;
                 this.totalXp = state.highscoreLight.totalXp;
                 this.totalLevel = state.highscoreLight.totalLevel;
+                this.rank = state.highscoreLight.totalRank;
                 this.playerName = state.highscoreLight.name;
                 this.avatarUrl = HighscoreService.URL_PLAYER_AVATAR_IMAGE.replace("#VAR#", state.highscoreLight.name);
             }

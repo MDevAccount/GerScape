@@ -1,75 +1,37 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule, LOCALE_ID } from '@angular/core';
-import { MatTableModule, MatSortModule, MatPaginatorModule, MatMenuModule, MatButtonModule, MatToolbarModule, MatTabsModule, MatSpinner, MatProgressSpinnerModule, MatCardModule, MatProgressBarModule, MatTooltipModule, MatGridTile, MatGridListModule } from '@angular/material';
-import { FlexLayoutModule } from '@angular/flex-layout';
-import { DecimalPipe, registerLocaleData } from '@angular/common';
-import localeDe from '@angular/common/locales/de';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { NgModule } from '@angular/core';
+import { HttpClientModule } from '@angular/common/http';
 
-import { NgApexchartsModule } from 'ng-apexcharts';
+import { StoreModule } from '@ngrx/store';
+import { EffectsModule } from '@ngrx/effects';
+
+import { SharedModule } from './shared/module/shared.module';
+import { CoreModule } from './core.module';
 
 import { AppComponent } from './app.component';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { EffectsModule } from '@ngrx/effects';
-import { StoreModule } from '@ngrx/store';
-
-import { HighscoreEffects } from './highscore/store/highscore.effects';
-import { HttpClientModule } from '@angular/common/http';
-import { HighscoreService } from './highscore/service/highscore.service';
-import { HighscoreComponent } from './highscore/highscore.component';
-import { HighscoreStatsComponent } from './highscore/highscore-stats/highscore-stats.component';
 import { HeaderComponent } from './header/header.component';
+import { HighscoreEffects } from './highscore/store/highscore.effects';
+import { HighscoreModule } from './highscore/highscore.module';
 import { appReducer } from './store/app.reducer';
-
-import { HighscoreQuestsChartComponent } from './highscore/highscore-quests-chart/highscore-quests-chart.component';
-import { HighscoreQuestsComponent } from './highscore/highscore-quests/highscore-quests.component';
-import { HighscoreClanComponent } from './highscore/highscore-clan/highscore-clan.component';
-import { HighscoreActivitiesComponent } from './highscore/highscore-activities/highscore-activities.component';
-import { HighscoreSesonalEventsComponent } from './highscore/highscore-sesonal/highscore-sesonal.component';
-import { HighscoreStatsChartComponent } from './highscore/highscore-stats-chart/highscore-stats-chart.component';
-
-registerLocaleData(localeDe);
+import { AppRoutingModule } from './app.routing';
 
 @NgModule({
   declarations: [
     AppComponent,
-    HighscoreComponent,
     HeaderComponent,
-    HighscoreStatsComponent,
-    HighscoreQuestsComponent,
-    HighscoreClanComponent,
-    HighscoreActivitiesComponent,
-    HighscoreSesonalEventsComponent,
-    HighscoreStatsChartComponent,
-    HighscoreQuestsChartComponent
   ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
-    HttpClientModule,
-    MatSortModule,
-    MatTableModule,
-    MatPaginatorModule,
-    MatMenuModule,
-    MatToolbarModule,
-    MatButtonModule,
-    MatTabsModule,
-    MatCardModule,
-    MatProgressSpinnerModule,
-    MatProgressBarModule,
-    MatTooltipModule,
-    FlexLayoutModule,
-    NgApexchartsModule,
+    CoreModule,
+    SharedModule,
+    AppRoutingModule,
+    HighscoreModule,
     EffectsModule.forRoot([HighscoreEffects]),
     StoreModule.forRoot(appReducer)
   ],
-  exports: [
-    MatMenuModule
-  ],
-  providers: [
-    HighscoreService, 
-    DecimalPipe,
-    { provide: LOCALE_ID, useValue: "de" }
-  ],
+  exports: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
