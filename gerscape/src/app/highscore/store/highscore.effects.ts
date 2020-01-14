@@ -188,13 +188,13 @@ export class HighscoreEffects {
                             map(strResponse => {
                                 this.store.dispatch(new HighscoreActions.SetClanMembers(this.handleClanMemberResponse(strResponse)));
                                 this.store.dispatch(new HighscoreActions.SetIsClanless(false));
-                                return this.store.dispatch(new HighscoreActions.SetIsLoadingClanMembers(false));
+                                return new HighscoreActions.SetIsLoadingClanMembers(false);
                             }, 
                             catchError(error  => {
                                 console.log("error: " + error);
                                 this.store.dispatch(new HighscoreActions.SetClanMembers(null));
                                 this.store.dispatch(new HighscoreActions.SetIsClanless(true));
-                                return of(this.store.dispatch(new HighscoreActions.SetIsLoadingClanMembers(false))); 
+                                return of(new HighscoreActions.SetIsLoadingClanMembers(false)); 
                             }))
                         )
             })

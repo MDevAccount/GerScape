@@ -2,7 +2,7 @@ import {Component, OnInit, OnDestroy} from '@angular/core';
 import { Location } from '@angular/common';
 import { AppState } from '../store/app.reducer';
 import { Store } from '@ngrx/store';
-import { FetchHighscoreLight, FetchPlayerDetails, FetchQuests, FetchRuneMetricsProfile, FetchSesonalEvents } from './store/highscore.actions';
+import { FetchHighscoreLight, FetchPlayerDetails, FetchQuests, FetchRuneMetricsProfile, FetchSesonalEvents, FetchClanMembers } from './store/highscore.actions';
 import { HighscoreService } from './service/highscore.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -13,6 +13,7 @@ import { Subscription } from 'rxjs';
   styleUrls: ['highscore.component.css'],
 })
 export class HighscoreComponent implements OnInit, OnDestroy {
+    currPlayerName;
     selectedTabIndex = 0;
     totalLevel;
     totalXp;
@@ -86,6 +87,12 @@ export class HighscoreComponent implements OnInit, OnDestroy {
                 this.playerName = state.highscoreLight.name;
                 this.avatarUrl = HighscoreService.URL_PLAYER_AVATAR_IMAGE.replace("#VAR#", state.highscoreLight.name);
             }
+            if (state.playerDetails) {
+                if (this.currPlayerName != state.playerDetails.name) {
+                  this.currPlayerName = state.playerDetails.name;
+                  this.store.dispatch(new FetchClanMembers(state.playerDetails.clan));
+                }
+              }
         });
     }
 
