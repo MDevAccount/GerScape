@@ -14,8 +14,16 @@ export interface State {
     playerDetails: PlayerDetails,
     sesonalEvents: SesonalEvent[],
     clanMembers: ClanMember[],
-    isRuneMetricsProfilePrivate: boolean;
-    isFetchingData: boolean;
+
+    isRuneMetricsProfilePrivate: boolean,
+    isClanless: boolean,
+
+    isLoadingRuneMetricsProfile: boolean,
+    isLoadingQuestResponse: boolean,
+    isLoadingHighscoreLight: boolean,
+    isLoadingPlayerDetails: boolean,
+    isLoadingSesonalEvents: boolean,
+    isLoadingClanMembers: boolean
 }
 
 const initialState: State = {
@@ -26,7 +34,13 @@ const initialState: State = {
     sesonalEvents: null,
     clanMembers: null,
     isRuneMetricsProfilePrivate: false,
-    isFetchingData: false
+    isClanless: false,
+    isLoadingRuneMetricsProfile: false,
+    isLoadingQuestResponse: false,
+    isLoadingHighscoreLight: false,
+    isLoadingPlayerDetails: false,
+    isLoadingSesonalEvents: false,
+    isLoadingClanMembers: false
 };
 
 export function highscoreReducer(state = initialState, action: HighscoreActions.HighscoreActions) {
@@ -74,10 +88,47 @@ export function highscoreReducer(state = initialState, action: HighscoreActions.
                 ...state,
                 isRuneMetricsProfilePrivate: action.payload
             }
-        case HighscoreActions.SET_IS_FETCHING_DATA:
+
+        case HighscoreActions.SET_IS_CLANLESS:
             return {
                 ...state,
-                isFetchingData: action.payload
+                isClanless: action.payload
+            }
+
+        case HighscoreActions.IS_LOADING_RUNEMETRICS_PROFILE:
+            return {
+                ...state,
+                isLoadingRuneMetricsProfile: action.payload
+            }
+
+        case HighscoreActions.IS_LOADING_QUEST_RESPONSE:
+            return {
+                ...state,
+                isLoadingQuestResponse: action.payload
+            }
+
+        case HighscoreActions.SET_IS_LOADING_HIGHSCORE_LIGHT:
+            return {
+                ...state,
+                isLoadingHighscoreLight: action.payload
+            }
+
+        case HighscoreActions.SET_IS_LOADING_PLAYER_DETAILS:
+            return {
+                ...state,
+                isLoadingPlayerDetails: action.payload
+            }
+
+        case HighscoreActions.SET_IS_LOADING_SESONAL_EVENTS:
+            return {
+                ...state,
+                isLoadingSesonalEvents: action.payload
+            }
+
+        case HighscoreActions.SET_IS_LOADING_CLAN_MEMBERS:
+            return {
+                ...state,
+                isLoadingClanMembers: action.payload
             }
         default:
             return state;

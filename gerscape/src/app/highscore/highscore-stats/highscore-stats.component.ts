@@ -22,7 +22,7 @@ export class HighscoreStatsComponent implements OnInit, OnDestroy {
   firstDataSourceCall = true;
   smallScreen = false;
   storeSubscription: Subscription;
-  isFetchingData;
+  isLoadingHighsoreLight = false;
 
   constructor(
     private store: Store<AppState>,
@@ -43,9 +43,10 @@ export class HighscoreStatsComponent implements OnInit, OnDestroy {
     this.dataSource.sort = this.sort;
 
     this.storeSubscription = this.store.select('highscore').subscribe(state => {
-      if (state.highscoreLight)
+      if (state.highscoreLight) {
         this.dataSource.data = state.highscoreLight.skills;
-      this.isFetchingData = state.isFetchingData;
+        this.isLoadingHighsoreLight = state.isLoadingHighscoreLight;
+      } 
     });
   }
 

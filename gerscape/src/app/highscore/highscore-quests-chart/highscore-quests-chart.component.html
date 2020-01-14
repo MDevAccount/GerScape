@@ -1,4 +1,4 @@
-<apx-chart *ngIf="!isFetchingData && !isRuneMetricsProfilePrivate && stats"
+<apx-chart *ngIf="!isRuneMetricsProfilePrivate && stats && !isLoadingQuests"
     [chart]="{
         show: false,
         type: 'radialBar', 
@@ -26,6 +26,6 @@
 </apx-chart>
 
 <div class="mat-spinner-div">
-  <mat-spinner *ngIf="isFetchingData">
+  <mat-spinner *ngIf="isLoadingQuests && !isRuneMetricsProfilePrivate">
   </mat-spinner>
 </div>

@@ -6,8 +6,9 @@
     padding-left: 10px;
     padding-right: 10px;
 }
+
 .mat-column-title {
-    width: 250px;
+    width: 350px;
     flex: none;
 }
 

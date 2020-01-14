@@ -12,12 +12,14 @@ import { Subscription } from 'rxjs';
 })
 export class HighscoreActivitiesComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort, {static:true}) sort: MatSort;
-  
+  @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
+
   displayedColumns: string[] = ['date', 'text', 'details'];
   dataSource = new MatTableDataSource<Activity>([]);
   isRuneMetricsProfilePrivate = false;
   storeSubscription: Subscription;
-  isFetchingData = false;
+  activitiesCount = 0;
+  isLoadingRuneMetricsProfile = false;
 
   constructor(
     private store: Store<AppState>) {
@@ -26,13 +28,16 @@ export class HighscoreActivitiesComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.dataSource.sort = this.sort;
+    this.dataSource.paginator = this.paginator;
 
     this.storeSubscription = this.store.select('highscore').subscribe(state => {
-      if (state.runemetricsProfile)
-        this.dataSource.data = state.runemetricsProfile.activities;
-      
       this.isRuneMetricsProfilePrivate = state.isRuneMetricsProfilePrivate;
-      this.isFetchingData = state.isFetchingData;
+      this.isLoadingRuneMetricsProfile = state.isLoadingRuneMetricsProfile;
+
+      if (state.runemetricsProfile) {
+        this.dataSource.data = state.runemetricsProfile.activities;
+        this.activitiesCount = state.runemetricsProfile.activities.length;
+      }
     });
   }
 

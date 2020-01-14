@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import { switchMap, map, catchError } from 'rxjs/operators';
-import { of, forkJoin } from 'rxjs';
+import { of } from 'rxjs';
 import * as HighscoreActions  from './highscore.actions';
 import { HighscoreService } from '../service/highscore.service';
 import { HighscoreLight, Skill, Minigame } from 'src/app/highscore/model/highscore-light.model';
@@ -35,78 +35,92 @@ export class HighscoreEffects {
 
     }
 
-    @Effect()
-    fetchEverything = this.actions$
-        .pipe(
-            ofType(HighscoreActions.FETCH_EVERYTHING),
-            switchMap((action: HighscoreActions.FetchEverything) => {
-                this.store.dispatch(new HighscoreActions.SetIsFetchingData(true));
-                const playerName = action.payload;
-                return forkJoin(
-                    [
-                        this.highscoreService.createHttpGetRequest<QuestResponse>(playerName, HighscoreService.URL_PLAYER_QUESTS, false)
-                            .pipe(
-                                map(questResponse => {
-                                    return questResponse;
-                                }, 
-                                catchError((questsError: QuestsError) => {
-                                    return null; 
-                                }))
-                            ),
-                        this.highscoreService.createHttpGetRequest<string>(playerName, HighscoreService.URL_PLAYER_DETAILS, true)
-                            .pipe(
-                                map(playerDetailsResponse => {
-                                    return this.handlePlayerDetailsResponse(playerDetailsResponse);
-                                }, 
-                                catchError(error => {
-                                    return null; 
-                                }))
-                            ),
-                        this.highscoreService.createHttpGetRequest<SesonalEvent[]>(playerName, HighscoreService.URL_SESONAL_EVENTS, false)
-                            .pipe(
-                                map(sesonalEventsResponse => {
-                                    console.log("test1");
-                                    return sesonalEventsResponse;
-                                }, 
-                                catchError(error => {
-                                    console.log("test");
-                                    return null; 
-                                }))
-                            ),
-                        this.highscoreService.createHttpGetRequest<RuneMetricsProfile>(playerName, HighscoreService.URL_RUNEMETRICS_PROFILE, false)
-                            .pipe(
-                                map(runeMetricsProfileResponse => {
-                                    return this.handleRuneMetricsResponse(runeMetricsProfileResponse);
-                                }, 
-                                catchError((runeMetricsError: RuneMetricsError) => {
-                                    return null; 
-                                }))
-                            ),
-                        this.highscoreService.createHttpGetRequest<string>(playerName, HighscoreService.URL_PLAYER_HIGHSCORE_LIGHT, true)
-                        .pipe(
-                            map(strResponse => {
-                               return this.handleHighscoreLightResponse(strResponse, playerName);
-                            }, 
-                            catchError(error => {
-                                return null; 
-                            }))
-                        )
-                    ]
-                )
-            }),
-            map(forks => {
-                const playerDetailsResponse = forks[1];
-                console.log(playerDetailsResponse);
-                this.store.dispatch(new HighscoreActions.SetQuestResponse(forks[0]));
-                this.store.dispatch(new HighscoreActions.SetPlayerDetails(forks[1]));
-                this.store.dispatch(new HighscoreActions.SetSesonalEvents(forks[2]));
-                this.store.dispatch(new HighscoreActions.SetRuneMetricsProfile(forks[3]));
-                this.store.dispatch(new HighscoreActions.SetHighscoreLight(forks[4]));
-                this.store.dispatch(new HighscoreActions.FetchClanMembers(playerDetailsResponse ? playerDetailsResponse.clan : null));
+    // @Effect()
+    // fetchEverything = this.actions$
+    //     .pipe(
+    //         ofType(HighscoreActions.FETCH_EVERYTHING),
+    //         switchMap((action: HighscoreActions.FetchEverything) => {
+    //             this.store.dispatch(new HighscoreActions.SetIsFetchingData(true));
+    //             const playerName = action.payload;
+    //             return forkJoin(
+    //                 [
+    //                     this.highscoreService.createHttpGetRequest<QuestResponse>(playerName, HighscoreService.URL_PLAYER_QUESTS, false)
+    //                         .pipe(
+    //                             map(questResponse => {
+    //                                 return questResponse;
+    //                             }, 
+    //                             catchError((questsError: QuestsError) => {
+    //                                 return null; 
+    //                             }))
+    //                         ),
+    //                     this.highscoreService.createHttpGetRequest<string>(playerName, HighscoreService.URL_PLAYER_DETAILS, true)
+    //                         .pipe(
+    //                             map(playerDetailsResponse => {
+    //                                 return this.handlePlayerDetailsResponse(playerDetailsResponse);
+    //                             }, 
+    //                             catchError(error => {
+    //                                 return null; 
+    //                             }))
+    //                         ),
+    //                     this.highscoreService.createHttpGetRequest<SesonalEvent[]>(playerName, HighscoreService.URL_SESONAL_EVENTS, false)
+    //                         .pipe(
+    //                             map(sesonalEventsResponse => {
+    //                                 console.log("test1");
+    //                                 return sesonalEventsResponse;
+    //                             }, 
+    //                             catchError(error => {
+    //                                 console.log("test");
+    //                                 return null; 
+    //                             }))
+    //                         ),
+    //                     this.highscoreService.createHttpGetRequest<RuneMetricsProfile>(playerName, HighscoreService.URL_RUNEMETRICS_PROFILE, false)
+    //                         .pipe(
+    //                             map(runeMetricsProfileResponse => {
+    //                                 return this.handleRuneMetricsResponse(runeMetricsProfileResponse);
+    //                             }, 
+    //                             catchError((runeMetricsError: RuneMetricsError) => {
+    //                                 return null; 
+    //                             }))
+    //                         ),
+    //                     this.highscoreService.createHttpGetRequest<string>(playerName, HighscoreService.URL_PLAYER_HIGHSCORE_LIGHT, true)
+    //                     .pipe(
+    //                         map(strResponse => {
+    //                            return this.handleHighscoreLightResponse(strResponse, playerName);
+    //                         }, 
+    //                         catchError(error => {
+    //                             return null; 
+    //                         }))
+    //                     )
+    //                 ]
+    //             )
+    //         }),
+    //         map(forks => {
+    //             const playerDetailsResponse = forks[1];
+    //             console.log(playerDetailsResponse);
+    //             this.store.dispatch(new HighscoreActions.SetQuestResponse(forks[0]));
+    //             this.store.dispatch(new HighscoreActions.SetPlayerDetails(forks[1]));
+    //             this.store.dispatch(new HighscoreActions.SetSesonalEvents(forks[2]));
+    //             this.store.dispatch(new HighscoreActions.SetRuneMetricsProfile(forks[3]));
+    //             this.store.dispatch(new HighscoreActions.SetHighscoreLight(forks[4]));
+    //             this.store.dispatch(new HighscoreActions.FetchClanMembers(playerDetailsResponse ? playerDetailsResponse.clan : null));
                 
-                return new HighscoreActions.SetIsFetchingData(false);
-            })
-        );
+    //             return new HighscoreActions.SetIsFetchingData(false);
+    //         })
+    //     );
+
+    // @Effect()
+    // fetchAny = this.actions$
+    //     .pipe(
+    //         ofType(HighscoreActions.FETCH_ANY),
+    //         switchMap((action: HighscoreActions.FetchAny) => {
+    //             const param = action.payload.searchParam;
+    //             action.payload.highscoreAction
+    //             HighscoreActions.
+    //             if (!param) {
+    //                 return of()
+    //             }
+    //         })
+    //     );
 
     @Effect()
     fetchQuests = this.actions$
@@ -116,18 +130,18 @@ export class HighscoreEffects {
                 const playerName = action.payload;
                 if (!playerName)
                     return of(new HighscoreActions.SetQuestResponse(null)); 
+                this.store.dispatch(new HighscoreActions.SetIsLoadingQuestResponse(true));
                 const url = HighscoreService.URL_PLAYER_QUESTS;
-                this.store.dispatch(new HighscoreActions.SetIsFetchingData(true));
                 return this.highscoreService
                     .createHttpGetRequest<QuestResponse>(playerName, url, false)
                         .pipe(
                             map(questResponse => {
-                                this.store.dispatch(new HighscoreActions.SetIsFetchingData(false));
-                                return new HighscoreActions.SetQuestResponse(questResponse);
+                                this.store.dispatch(new HighscoreActions.SetQuestResponse(questResponse));
+                                return new HighscoreActions.SetIsLoadingQuestResponse(false);
                             }, 
                             catchError((questsError: QuestsError) => {
-                                this.store.dispatch(new HighscoreActions.SetIsFetchingData(false));
-                                return of(new HighscoreActions.SetQuestResponse(null)); 
+                                this.store.dispatch(new HighscoreActions.SetQuestResponse(null));
+                                return of(new HighscoreActions.SetIsLoadingQuestResponse(false)); 
                             })
                         )
                     )
@@ -141,19 +155,18 @@ export class HighscoreEffects {
             switchMap((action: HighscoreActions.FetchPlayerDetails) => {
                 const playerName = action.payload;
                 if (!playerName)
-                    return of(new HighscoreActions.SetPlayerDetails(null)); 
+                this.store.dispatch(new HighscoreActions.SetIsLoadingPlayerDetails(true));
                 const url = HighscoreService.URL_PLAYER_DETAILS;
-                this.store.dispatch(new HighscoreActions.SetIsFetchingData(true));
                 return this.highscoreService
                     .createHttpGetRequest<string>(playerName, url, true)
                         .pipe(
                             map(playerDetailsResponse => {
-                                this.store.dispatch(new HighscoreActions.SetIsFetchingData(false));
-                                return new HighscoreActions.SetPlayerDetails(this.handlePlayerDetailsResponse(playerDetailsResponse));
+                                this.store.dispatch(new HighscoreActions.SetPlayerDetails(this.handlePlayerDetailsResponse(playerDetailsResponse)));
+                                return new HighscoreActions.SetIsLoadingPlayerDetails(false);
                             }, 
                             catchError(error => {
-                                this.store.dispatch(new HighscoreActions.SetIsFetchingData(false));
-                                return of(new HighscoreActions.SetPlayerDetails(null)); 
+                                this.store.dispatch(new HighscoreActions.SetPlayerDetails(null));
+                                return of(new HighscoreActions.SetIsLoadingPlayerDetails(false)); 
                             }))
                         )
             })
@@ -167,19 +180,21 @@ export class HighscoreEffects {
                 const clanName = action.payload;
                 if (!clanName)
                     return of(new HighscoreActions.SetClanMembers(null)); 
+                this.store.dispatch(new HighscoreActions.SetIsLoadingClanMembers(true));
                 const url = HighscoreService.URL_CLANMEMBERS;
-                this.store.dispatch(new HighscoreActions.SetIsFetchingData(true));
                 return this.highscoreService
                     .createHttpGetRequest<string>(clanName, url, true)
                         .pipe(
                             map(strResponse => {
-                                this.store.dispatch(new HighscoreActions.SetIsFetchingData(false));
-                                return new HighscoreActions.SetClanMembers(this.handleClanMemberResponse(strResponse));
+                                this.store.dispatch(new HighscoreActions.SetClanMembers(this.handleClanMemberResponse(strResponse)));
+                                this.store.dispatch(new HighscoreActions.SetIsClanless(false));
+                                return this.store.dispatch(new HighscoreActions.SetIsLoadingClanMembers(false));
                             }, 
                             catchError(error  => {
                                 console.log("error: " + error);
-                                this.store.dispatch(new HighscoreActions.SetIsFetchingData(false));
-                                return of(new HighscoreActions.SetClanMembers(null)); 
+                                this.store.dispatch(new HighscoreActions.SetClanMembers(null));
+                                this.store.dispatch(new HighscoreActions.SetIsClanless(true));
+                                return of(this.store.dispatch(new HighscoreActions.SetIsLoadingClanMembers(false))); 
                             }))
                         )
             })
@@ -193,18 +208,18 @@ export class HighscoreEffects {
                 const playerName = action.payload;
                 if (!playerName)
                     return of(new HighscoreActions.SetSesonalEvents(null)); 
+                this.store.dispatch(new HighscoreActions.SetIsLoadingSesonalEvents(true));
                 const url = HighscoreService.URL_SESONAL_EVENTS;
-                this.store.dispatch(new HighscoreActions.SetIsFetchingData(true));
                 return this.highscoreService
                     .createHttpGetRequest<SesonalEvent[]>(playerName, url, false)
                         .pipe(
                             map(sesonalEventsResponse => {
-                                this.store.dispatch(new HighscoreActions.SetIsFetchingData(false));
-                                return new HighscoreActions.SetSesonalEvents(sesonalEventsResponse);
+                                this.store.dispatch(new HighscoreActions.SetSesonalEvents(sesonalEventsResponse));
+                                return new HighscoreActions.SetIsLoadingSesonalEvents(false);
                             }, 
                             catchError(error => {
-                                this.store.dispatch(new HighscoreActions.SetIsFetchingData(false));
-                                return of(new HighscoreActions.SetSesonalEvents(null)); 
+                                this.store.dispatch(new HighscoreActions.SetSesonalEvents(null));
+                                return of(new HighscoreActions.SetIsLoadingSesonalEvents(false)); 
                             }))
                         )
             })
@@ -218,18 +233,18 @@ export class HighscoreEffects {
                 const playerName = action.payload;
                 if (!playerName)
                     return of(new HighscoreActions.SetRuneMetricsProfile(null)); 
+                this.store.dispatch(new HighscoreActions.SetIsLoadingRuneMetricsProfile(true));
                 const url = HighscoreService.URL_RUNEMETRICS_PROFILE;
-                this.store.dispatch(new HighscoreActions.SetIsFetchingData(true));
                 return this.highscoreService
                     .createHttpGetRequest<RuneMetricsProfile>(playerName, url, false)
                         .pipe(
                             map(runeMetricsProfileResponse => {
-                                this.store.dispatch(new HighscoreActions.SetIsFetchingData(false));
-                                return new HighscoreActions.SetRuneMetricsProfile(this.handleRuneMetricsResponse(runeMetricsProfileResponse));
+                                this.store.dispatch(new HighscoreActions.SetRuneMetricsProfile(this.handleRuneMetricsResponse(runeMetricsProfileResponse)));
+                                return new HighscoreActions.SetIsLoadingRuneMetricsProfile(false);
                             }, 
                             catchError((runeMetricsError: RuneMetricsError) => {
-                                this.store.dispatch(new HighscoreActions.SetIsFetchingData(false));
-                                return of(new HighscoreActions.SetRuneMetricsProfile(null)); 
+                                this.store.dispatch(new HighscoreActions.SetRuneMetricsProfile(null));
+                                return of(new HighscoreActions.SetIsLoadingRuneMetricsProfile(false)); 
                             }))
                         )
             })
@@ -243,18 +258,18 @@ export class HighscoreEffects {
                 const playerName = action.payload;
                 if (!playerName)
                     return of(new HighscoreActions.SetHighscoreLight(null)); 
+                this.store.dispatch(new HighscoreActions.SetIsLoadingHighscoreLight(true));
                 const url = HighscoreService.URL_PLAYER_HIGHSCORE_LIGHT;
-                this.store.dispatch(new HighscoreActions.SetIsFetchingData(true));
                 return this.highscoreService
                     .createHttpGetRequest<string>(playerName, url, true)
                         .pipe(
                             map(strResponse => {
-                                this.store.dispatch(new HighscoreActions.SetIsFetchingData(false));
-                               return new HighscoreActions.SetHighscoreLight(this.handleHighscoreLightResponse(strResponse, playerName));
+                                this.store.dispatch(new HighscoreActions.SetHighscoreLight(this.handleHighscoreLightResponse(strResponse, playerName)));
+                                return new HighscoreActions.SetIsLoadingHighscoreLight(false);
                             }, 
                             catchError(error => {
-                                this.store.dispatch(new HighscoreActions.SetIsFetchingData(false));
-                                return of(new HighscoreActions.SetHighscoreLight(null)); 
+                                this.store.dispatch(new HighscoreActions.SetHighscoreLight(null));
+                                return of(new HighscoreActions.SetIsLoadingHighscoreLight(false)); 
                             }))
                         )
             })

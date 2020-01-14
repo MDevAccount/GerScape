@@ -13,16 +13,81 @@ export const SET_SESONAL_EVENTS = "[Highscore] Set sesonal events";
 export const SET_QUESTS = "[Highscore] Set quests";
 export const SET_HIGHSCORE_LIGHT = "[Highscore] Set highscore light";
 export const SET_RUNEMETRICS_PROFILE = "[Highscore] Set runemetrics profile";
+
 export const FETCH_PLAYER_DETAILS = "[Highscore] Fetch player details";
 export const FETCH_CLAN_MEMBERS = "[Highscore] Fetch clan members";
 export const FETCH_SESONAL_EVENTS = "[Highscore] Fetch sesonal events";
 export const FETCH_HIGHSCORE_LIGHT = "[Highscore] Fetch highscore light";
 export const FETCH_QUESTS = "[Highscore] Fetch quests";
 export const FETCH_RUNEMETRICS_PROFILE = "[Highscore] Fetch runemetrics profile";
-export const SET_IS_RUNEMETRICS_PROFILE_PRIVATE = "[Highscore] Set is runemetrics profile private";
-export const SET_IS_FETCHING_DATA = "[Highscore] Set is fetching data";
-export const FETCH_EVERYTHING = "[Highscore] Fetch everything";
 
+export const SET_IS_RUNEMETRICS_PROFILE_PRIVATE = "[Highscore] Set is runemetrics profile private";
+export const SET_IS_CLANLESS = "[Highscore] Set is clanless";
+
+export const IS_LOADING_RUNEMETRICS_PROFILE = "[Highscore] Set is loading runemetrics profile";
+export const IS_LOADING_QUEST_RESPONSE = "[Highscore] Set is loading quest reponse";
+export const SET_IS_LOADING_HIGHSCORE_LIGHT = "[Highscore] Set is loading highscore light";
+export const SET_IS_LOADING_PLAYER_DETAILS = "[Highscore] Set is loading player details";
+export const SET_IS_LOADING_SESONAL_EVENTS = "[Highscore] Set is loading sesonal events";
+export const SET_IS_LOADING_CLAN_MEMBERS = "[Highscore] Set is loading clan members";
+
+export const FETCH_ANY = "[Highscore] Fetch any";
+
+export class SetIsClanless implements Action {
+    readonly type = SET_IS_CLANLESS;
+
+    constructor(public payload: boolean) {
+
+    }
+}
+
+export class SetIsLoadingRuneMetricsProfile implements Action {
+    readonly type = IS_LOADING_RUNEMETRICS_PROFILE;
+
+    constructor(public payload: boolean) {
+
+    }
+}
+
+export class SetIsLoadingQuestResponse implements Action {
+    readonly type = IS_LOADING_QUEST_RESPONSE;
+
+    constructor(public payload: boolean) {
+
+    }
+}
+
+export class SetIsLoadingHighscoreLight implements Action {
+    readonly type = SET_IS_LOADING_HIGHSCORE_LIGHT;
+
+    constructor(public payload: boolean) {
+
+    }
+}
+
+export class SetIsLoadingPlayerDetails implements Action {
+    readonly type = SET_IS_LOADING_PLAYER_DETAILS;
+
+    constructor(public payload: boolean) {
+
+    }
+}
+
+export class SetIsLoadingSesonalEvents implements Action {
+    readonly type = SET_IS_LOADING_SESONAL_EVENTS;
+
+    constructor(public payload: boolean) {
+
+    }
+}
+
+export class SetIsLoadingClanMembers implements Action {
+    readonly type = SET_IS_LOADING_CLAN_MEMBERS;
+
+    constructor(public payload: boolean) {
+
+    }
+}
 export class SetHighscoreLight implements Action {
     readonly type = SET_HIGHSCORE_LIGHT;
 
@@ -35,22 +100,6 @@ export class FetchHighscoreLight implements Action {
     readonly type = FETCH_HIGHSCORE_LIGHT;
     
     constructor(public payload: string) {
-
-    }
-}
-
-export class FetchEverything implements Action {
-    readonly type = FETCH_EVERYTHING;
-    
-    constructor(public payload: string) {
-
-    }
-}
-
-export class SetIsFetchingData implements Action {
-    readonly type = SET_IS_FETCHING_DATA;
-    
-    constructor(public payload: boolean) {
 
     }
 }
@@ -144,6 +193,25 @@ export class FetchRuneMetricsProfile implements Action {
     }
 }
 
+export class FetchAny implements Action {
+    readonly type = FETCH_ANY;
+
+    constructor(public payload: 
+        {
+            searchParam: string,
+            highscoreAction: string,
+            highscoreActionAction: HighscoreActions,
+            payLoadNullAction: HighscoreActions,
+            startLoadingAction: HighscoreActions,
+            stopLoadingAction: HighscoreActions,
+            url: string,
+            responseType: any,
+            isTextResponse: boolean,
+        }) {
+
+    }
+}
+
 export type HighscoreActions = 
     | FetchClanMembers
     | SetClanMembers
@@ -159,6 +227,11 @@ export type HighscoreActions =
     | FetchRuneMetricsProfile
     | SetRuneMetricsProfile
     | SetIsRuneMetricsProfilePrivate
-    | SetIsFetchingData
-    | FetchEverything;
-
+    | SetIsClanless
+    | SetIsLoadingClanMembers
+    | SetIsLoadingHighscoreLight
+    | SetIsLoadingQuestResponse
+    | SetIsLoadingRuneMetricsProfile
+    | SetIsLoadingSesonalEvents
+    | SetIsLoadingPlayerDetails
+    | FetchAny;

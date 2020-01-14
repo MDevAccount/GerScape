@@ -13,12 +13,11 @@ export class HighscoreQuestsChartComponent implements OnInit, OnDestroy {
     series: number[] = [];
     labels: string[] = [];
     currPlayerName = "";
-    isFetchingData = false;
     isRuneMetricsProfilePrivate = false;
     questResponse;
     stats;
-    storeSubscription: Subscription;
-    
+    isLoadingQuests = false;
+    storeSubscription: Subscription; 
     plotOptions = {
         radialBar: {
             dataLabels: {
@@ -50,7 +49,8 @@ export class HighscoreQuestsChartComponent implements OnInit, OnDestroy {
         this.storeSubscription = this.store.select('highscore').subscribe(state => {
 
             this.isRuneMetricsProfilePrivate = state.isRuneMetricsProfilePrivate;
-            this.isFetchingData = state.isFetchingData;
+            this.isLoadingQuests = state.isLoadingQuestResponse;
+            
             if (state.highscoreLight) {
                 this.stats = state.highscoreLight;
             } else if (state.runemetricsProfile) {
@@ -63,9 +63,10 @@ export class HighscoreQuestsChartComponent implements OnInit, OnDestroy {
 
             if (state.questResponse) {
                 this.questResponse = this.questResponse;
-                if (state.highscoreLight || state.runemetricsProfile && state.isFetchingData == false) {
+                if (state.highscoreLight || state.runemetricsProfile && state.isLoadingQuestResponse == false) {
                     let playerName = state.highscoreLight ? state.highscoreLight.name : state.runemetricsProfile.name;
                     if (this.currPlayerName != playerName) {
+                        this.currPlayerName = playerName;
                         this.series = [];
                         this.labels = [];
                         this.labels.push("ERLEDIGT");

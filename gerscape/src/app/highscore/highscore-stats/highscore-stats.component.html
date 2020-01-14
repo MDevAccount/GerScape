@@ -50,12 +50,12 @@
 
 
 <mat-card 
-    *ngIf="isFetchingData">
+    *ngIf="isLoadingHighsoreLight">
   <mat-spinner>
   </mat-spinner>
 </mat-card>
 
-<mat-card *ngIf="!isFetchingData && dataSource.data.length == 0">
+<mat-card *ngIf="!isLoadingHighsoreLight &&dataSource.data && dataSource.data.length == 0">
     <p>
         Daten konnten nicht geladen werden
     </p>

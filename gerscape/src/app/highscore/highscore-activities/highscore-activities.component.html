@@ -20,19 +20,25 @@
 
 </table>
 
+<mat-paginator 
+    [length]="activitiesCount" 
+    [pageSize]="10" 
+    showFirstLastButtons>
+</mat-paginator>
+
 <mat-card 
-    *ngIf="isFetchingData">
+    *ngIf="isLoadingRuneMetricsProfile">
   <mat-spinner>
   </mat-spinner>
 </mat-card>
 
-<mat-card *ngIf="!isFetchingData && isRuneMetricsProfilePrivate">
+<mat-card *ngIf="!isLoadingRuneMetricsProfile && isRuneMetricsProfilePrivate">
     <p>
         Der Spieler hat sein RuneMetrics Profil auf privat gestellt :(
     </p>
 </mat-card>
 
-<mat-card *ngIf="!isFetchingData && dataSource.data.length == 0 && !isRuneMetricsProfilePrivate">
+<mat-card *ngIf="!isLoadingRuneMetricsProfile && !isRuneMetricsProfilePrivate && dataSource.data && dataSource.data.length == 0">
     <p>
         Daten konnten nicht geladen werden
     </p>

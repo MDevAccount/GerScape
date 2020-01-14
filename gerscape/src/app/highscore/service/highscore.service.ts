@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient} from '@angular/common/http';
 import { RuneMetricsProfile } from 'src/app/highscore/model/runemetrics-profile.model';
 import { HighscoreLight } from 'src/app/highscore/model/highscore-light.model';
-import { FetchSesonalEvents, FetchClanMembers, FetchQuests, FetchPlayerDetails, FetchHighscoreLight, FetchRuneMetricsProfile, SetIsFetchingData, FetchEverything } from '../store/highscore.actions';
 import { AppState } from 'src/app/store/app.reducer';
 import { Store } from '@ngrx/store';
 import { catchError } from 'rxjs/operators';

@@ -15,22 +15,22 @@ body { margin: 0; font-family: 'El Messiri'; }
 }
 ::-webkit-scrollbar-thumb {
   background: #43e424;
-  border: 28px none #ffffff;
+  border: 55px double #393939;
   border-radius: 33px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #393939;
-}
-::-webkit-scrollbar-thumb:active {
   background: #62aab4;
 }
+::-webkit-scrollbar-thumb:active {
+  background: #f0262c;
+}
 ::-webkit-scrollbar-track {
-  background: #393939;
-  border: 74px none #ffffff;
-  border-radius: 15px;
+  background: #333333;
+  border: 87px none #ffffff;
+  border-radius: 60px;
 }
 ::-webkit-scrollbar-track:hover {
-  background: #43e424;
+  background: #393939;
 }
 ::-webkit-scrollbar-track:active {
   background: #333333;

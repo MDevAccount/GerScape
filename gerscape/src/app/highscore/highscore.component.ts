@@ -1,7 +1,8 @@
 import {Component, OnInit, OnDestroy} from '@angular/core';
+import { Location } from '@angular/common';
 import { AppState } from '../store/app.reducer';
 import { Store } from '@ngrx/store';
-import { FetchEverything } from './store/highscore.actions';
+import { FetchHighscoreLight, FetchPlayerDetails, FetchQuests, FetchRuneMetricsProfile, FetchSesonalEvents } from './store/highscore.actions';
 import { HighscoreService } from './service/highscore.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -12,6 +13,7 @@ import { Subscription } from 'rxjs';
   styleUrls: ['highscore.component.css'],
 })
 export class HighscoreComponent implements OnInit, OnDestroy {
+    selectedTabIndex = 0;
     totalLevel;
     totalXp;
     combatLevel;
@@ -19,34 +21,28 @@ export class HighscoreComponent implements OnInit, OnDestroy {
     playerName;
     avatarUrl = "./assets/img/default_chat.png";
     isRuneMetricsProfilePrivate = false;
-    isFetchingData = false;
     storeSubscription: Subscription;
     routeSubscription: Subscription;
     activeTabIndex = 0;
     navLinks = [
         {
-            label: 'Fertigkeiten',
-            link: '/stats',
+            link: 'stats',
             index: 0
         }, 
         {
-            label: 'Letzte Aktivitäten',
-            link: '/activities',
+            link: 'activities',
             index: 1
         }, 
         {
-            label: 'Abenteuer',
-            link: '/quests',
+            link: 'quests',
             index: 2
         }, 
         {
-            label: 'Sesonale Liste',
-            link: '/events',
+            link: 'events',
             index: 3
         }, 
         {
-            label: 'Clan',
-            link: '/clan',
+            link: 'clan',
             index: 4
         }, 
     ];
@@ -54,22 +50,27 @@ export class HighscoreComponent implements OnInit, OnDestroy {
     constructor(
         private store: Store<AppState>,
         private route: ActivatedRoute,
-        private router: Router) {
+        private router: Router,
+        private location: Location) {
 
     }
 
     ngOnInit() {
         this.routeSubscription = this.route.params.subscribe(params => {
-            if (!this.playerName && !this.router.url.endsWith("highscore") && !this.isFetchingData) {
+            //TODO add last request sent to reducer so we can check here..
+            if (!this.playerName && !this.router.url.endsWith("highscore")) {
+                this.setTabAccordingToUrl(this.router.url);
                 let name = this.router.url.split("/")[2];
-                this.store.dispatch(new FetchEverything(name));
+                this.store.dispatch(new FetchHighscoreLight(name));
+                this.store.dispatch(new FetchPlayerDetails(name));
+                this.store.dispatch(new FetchQuests(name));
+                this.store.dispatch(new FetchRuneMetricsProfile(name));
+                this.store.dispatch(new FetchSesonalEvents(name));
             } 
-            this.activeTabIndex = this.navLinks.indexOf(this.navLinks.find(navLink => navLink.link === '.' + this.router.url));
         });
 
         this.storeSubscription = this.store.select('highscore').subscribe(state => {
             this.isRuneMetricsProfilePrivate = state.isRuneMetricsProfilePrivate;
-            this.isFetchingData = state.isFetchingData;
             if (state.runemetricsProfile) {
                 this.combatLevel = state.runemetricsProfile.combatlevel;
                 this.totalLevel = state.runemetricsProfile.totalskill;
@@ -91,5 +92,21 @@ export class HighscoreComponent implements OnInit, OnDestroy {
     ngOnDestroy() {
         this.storeSubscription.unsubscribe();
         this.routeSubscription.unsubscribe();
+    }
+
+    setTabAccordingToUrl(url: string) {
+        let splittedUrl = this.router.url.split("/");
+        if (splittedUrl[3]) {
+            let link = this.router.url.split("/")[3];
+            this.navLinks.filter(navLink => navLink.link == link).map(link => {
+                this.selectedTabIndex = link.index;
+            })
+        }
+    }
+
+    setUrlManuallyTo(event) {
+        let splittedUrl = this.router.url.split("/");
+        let url = this.router.url.substring(0, this.router.url.length - splittedUrl[splittedUrl.length - 1].length)
+        this.location.go(url + this.navLinks[event.index].link);
     }
 }

@@ -18,8 +18,8 @@ export class HighscoreQuestsComponent implements OnInit, OnDestroy {
   dataSource = new MatTableDataSource<Quest>([]);
   isRuneMetricsProfilePrivate = false;
   storeSubscription: Subscription;
-  isFetchingData = false;
   questsCount = 0;
+  isLoadingQuests = false;
 
   constructor(
     private store: Store<AppState>) {
@@ -31,12 +31,12 @@ export class HighscoreQuestsComponent implements OnInit, OnDestroy {
     this.dataSource.paginator = this.paginator;
 
     this.storeSubscription = this.store.select('highscore').subscribe(state => {
-      if (state.questResponse)  {
+      this.isRuneMetricsProfilePrivate = state.isRuneMetricsProfilePrivate;
+      this.isLoadingQuests = state.isLoadingQuestResponse;
+      if (state.questResponse) {
         this.dataSource.data = state.questResponse.quests;
         this.questsCount = state.questResponse.quests.length;
       }
-      this.isRuneMetricsProfilePrivate = state.isRuneMetricsProfilePrivate;
-      this.isFetchingData = state.isFetchingData;
     });
   }
 

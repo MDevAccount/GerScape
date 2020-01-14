@@ -65,16 +65,10 @@
   <div gdArea="highscore" style="max-width: 850px; min-width: 200px;">
     <mat-card>
       <mat-card-title>
-        <!-- <nav mat-tab-nav-bar animationDuration="500ms">
-          <a mat-tab-link
-            *ngFor="let navLink of navLinks"
-            [routerLink]="playerName + navLink.link"
-            routerLinkActive #rla="routerLinkActive"
-            [active]="rla.isActive">  
-              {{navLink.label}}  
-          </a>
-        </nav> -->
-         <mat-tab-group animationDuration="500ms">
+         <mat-tab-group 
+          animationDuration="500ms" 
+          [selectedIndex]="selectedTabIndex" 
+          (selectedTabChange)="setUrlManuallyTo($event)">
           <mat-tab label="Fertigkeiten">
             <mat-card>
               <ng-template matTabContent>

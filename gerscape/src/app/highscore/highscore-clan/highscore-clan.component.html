@@ -24,18 +24,24 @@
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 </table>
 
-<mat-card *ngIf="isFetchingData">
+<mat-paginator 
+    [length]="clanMembersCount" 
+    [pageSize]="10" 
+    showFirstLastButtons>
+</mat-paginator>
+
+<mat-card *ngIf="isLoadingPlayerDetails || isLoadingClanMembers">
     <mat-spinner>
     </mat-spinner>
   </mat-card>
   
-  <mat-card *ngIf="playerDetails && !playerDetails.clan">
+  <mat-card *ngIf="isClanless && !isLoadingPlayerDetails && !isLoadingClanMembers">
       <p>
           Der Spieler ist in keinem Clan
       </p>
   </mat-card>
 
-<mat-card *ngIf="!isFetchingData && playerDetails && playerDetails.clan && dataSource.data.length == 0">
+<mat-card *ngIf="!isLoadingPlayerDetails && !isLoadingClanMembers && !isClanless && dataSource.data && dataSource.data.length == 0">
     <p>
         Daten konnten nicht geladen werden
     </p>

@@ -14,13 +14,10 @@ import { Subscription } from 'rxjs';
 export class HighscoreStatsChartComponent implements OnInit, OnDestroy {
     series: number[] = [];
     labels: string[] = [];
-    isFetchingData = false;
-    isRuneMetricsProfilePrivate = false;
-    questResponse;
-    stats;
+    highscoreLight;
     currPlayerName = "";
+    isLoadingHighscoreLight = false;
     storeSubscription: Subscription;
-    
     plotOptions = {
         radialBar: {
             dataLabels: {
@@ -57,39 +54,34 @@ export class HighscoreStatsChartComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.storeSubscription = this.store.select('highscore').subscribe(state => {
 
-            this.isRuneMetricsProfilePrivate = state.isRuneMetricsProfilePrivate;
-            this.isFetchingData = state.isFetchingData;
-            if (state.highscoreLight) {
-                this.stats = state.highscoreLight;
-            } else if (state.runemetricsProfile) {
-                this.stats = state.runemetricsProfile;
-            }
+            this.highscoreLight = state.highscoreLight;
+            this.isLoadingHighscoreLight = state.isLoadingHighscoreLight;
 
             let level120s;
             let level99s;
             let epMaxSkillsCount;
             let skills;
 
-            if (state.highscoreLight || state.runemetricsProfile && this.isFetchingData == false) {
-                let playerName = state.highscoreLight ? state.highscoreLight.name : state.runemetricsProfile.name;
+            if (!state.isLoadingHighscoreLight && state.highscoreLight) {
+                let playerName = state.highscoreLight.name;
+
                 if (this.currPlayerName != playerName) {
+
+                    this.currPlayerName = playerName;
+
                     this.series = [];
                     this.labels = [];
+
                     this.labels.push("ALLES 99");
                     this.labels.push("COMP STATS");
                     this.labels.push("ALLES 120");
                     this.labels.push("ALLES 200M");
-                    if (state.highscoreLight) {
-                        level99s = state.highscoreLight.skills.filter(skill => skill.level >= 99).length;
-                        level120s = state.highscoreLight.skills.filter(skill => this.highscoreService.getLevelForXp(skill.xp) >= 120).length;
-                        epMaxSkillsCount = state.highscoreLight.skills.filter(skill => skill.xp == HighscoreService.MAX_SKILL_XP).length;
-                        skills = state.highscoreLight.skills;
-                    } else if (state.runemetricsProfile) {
-                        level99s = state.runemetricsProfile.skillvalues.filter(skillvalues => skillvalues.level >= 99).length;
-                        level120s = state.runemetricsProfile.skillvalues.filter(skillvalues => this.highscoreService.getLevelForXp(skillvalues.xp) >= 120).length;
-                        epMaxSkillsCount = state.runemetricsProfile.skillvalues.filter(skillValue => skillValue.xp == HighscoreService.MAX_SKILL_XP).length;
-                        skills = state.runemetricsProfile.skillvalues;
-                    }
+
+                    level99s = state.highscoreLight.skills.filter(skill => skill.level >= 99).length;
+                    level120s = state.highscoreLight.skills.filter(skill => this.highscoreService.getLevelForXp(skill.xp) >= 120).length;
+                    epMaxSkillsCount = state.highscoreLight.skills.filter(skill => skill.xp == HighscoreService.MAX_SKILL_XP).length;
+                    skills = state.highscoreLight.skills;
+
                     this.series.push(this.getPercentOfAndMax100(level99s, HighscoreService.SKILL_AMOUNT));
                     this.series.push(this.getCompPercentDone(skills));
                     this.series.push(this.getPercentOfAndMax100(level120s, HighscoreService.SKILL_AMOUNT));

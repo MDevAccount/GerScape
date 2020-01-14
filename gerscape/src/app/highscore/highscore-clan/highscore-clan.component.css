@@ -8,7 +8,7 @@
 }
 
 .mat-column-name {
-    min-width: 50px;
+    min-width: 100px;
     flex: none;
 }
 

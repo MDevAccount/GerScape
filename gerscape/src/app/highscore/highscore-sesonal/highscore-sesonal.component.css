@@ -7,13 +7,18 @@
     padding-right: 10px;
 }
 
-.mat-column-date {
-    width: 150px;
+.mat-column-startDate {
+    width: 75px;
     flex: none;
 }
 
-.mat-column-text {
-    width: 225px;
+.mat-column-endDate {
+    width: 75px;
+    flex: none;
+}
+
+.mat-column-title {
+    width: 250px;
     flex: none;
 }
 

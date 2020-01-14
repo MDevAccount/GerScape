@@ -36,21 +36,25 @@
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 </table>
 
-<mat-paginator [length]="questsCount" [pageSize]="10" showFirstLastButtons></mat-paginator>
+<mat-paginator
+    [length]="questsCount" 
+    [pageSize]="10" 
+    showFirstLastButtons>
+</mat-paginator>
 
 <mat-card 
-    *ngIf="isFetchingData">
+    *ngIf="isLoadingQuests">
   <mat-spinner>
   </mat-spinner>
 </mat-card>
 
-<mat-card *ngIf="!isFetchingData && isRuneMetricsProfilePrivate">
+<mat-card *ngIf="!isLoadingQuests && isRuneMetricsProfilePrivate">
     <p>
         Der Spieler hat sein RuneMetrics Profil auf privat gestellt :(
     </p>
 </mat-card>
 
-<mat-card *ngIf="!isFetchingData && dataSource.data.length == 0 && !isRuneMetricsProfilePrivate">
+<mat-card *ngIf="!isLoadingQuests && !isRuneMetricsProfilePrivate && dataSource.data && dataSource.data.length == 0">
     <p>
         Daten konnten nicht geladen werden
     </p>

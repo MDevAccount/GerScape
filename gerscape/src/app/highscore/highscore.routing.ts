@@ -10,33 +10,31 @@ import { HighscoreClanComponent } from './highscore-clan/highscore-clan.componen
 const routes: Routes = [  
     {
         path: '', 
-        component: HighscoreComponent,
-        children: [
-            {
-                path: ':playername/stats', 
-                component: HighscoreStatsComponent
-            },
-            {
-                path: ':playername/activities', 
-                component: HighscoreActivitiesComponent
-            },
-            {
-                path: ':playername/quests', 
-                component: HighscoreQuestsComponent
-            },
-            {
-                path: ':playername/events', 
-                component: HighscoreSesonalEventsComponent
-            },
-            {
-                path: ':playername/clan', 
-                component: HighscoreClanComponent
-            }
-        ]    
+        component: HighscoreComponent
     },
     {
         path: ':playername', 
         redirectTo: ":playername/stats"
+    },
+    {
+        path: ':playername/stats', 
+        component: HighscoreComponent
+    },
+    {
+        path: ':playername/activities', 
+        component: HighscoreComponent
+    },
+    {
+        path: ':playername/quests', 
+        component: HighscoreComponent
+    },
+    {
+        path: ':playername/events', 
+        component: HighscoreComponent
+    },
+    {
+        path: ':playername/clan', 
+        component: HighscoreComponent
     }
 ];
 

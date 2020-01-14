@@ -1,9 +1,10 @@
 import { Component, ViewChild, OnInit, OnDestroy } from '@angular/core';
-import { MatSort, MatTableDataSource } from '@angular/material';
+import { MatSort, MatTableDataSource, MatPaginator } from '@angular/material';
 import { AppState } from 'src/app/store/app.reducer';
 import { Store } from '@ngrx/store';
 import { ClanMember } from '../model/clanmember.model';
 import { Subscription } from 'rxjs';
+import { FetchClanMembers } from '../store/highscore.actions';
 
 @Component({
   selector: 'app-highscore-clan',
@@ -12,11 +13,16 @@ import { Subscription } from 'rxjs';
 })
 export class HighscoreClanComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort, {static:true}) sort: MatSort;
+  @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   displayedColumns: string[] = ['name', 'role', 'clanXp', 'kills'];
   dataSource = new MatTableDataSource<ClanMember>([]);
   playerDetails;
   storeSubscription: Subscription;
-  isFetchingData = false;
+  clanMembersCount = 0;
+  isLoadingPlayerDetails = false;
+  isLoadingClanMembers = false;
+  isClanless = false;
+  currPlayerName;
 
   constructor(
     private store: Store<AppState>) {
@@ -25,13 +31,26 @@ export class HighscoreClanComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.dataSource.sort = this.sort;
+    this.dataSource.paginator = this.paginator;
 
     this.storeSubscription = this.store.select('highscore').subscribe(state => {
+      this.isLoadingPlayerDetails = state.isLoadingPlayerDetails;
+      this.isLoadingClanMembers = state.isLoadingClanMembers;
+      this.isClanless = state.isClanless;
+
       if (state.playerDetails)
         this.playerDetails = state.playerDetails;
-      if (state.clanMembers)
+      if (state.clanMembers) {
         this.dataSource.data = state.clanMembers;
-      this.isFetchingData = state.isFetchingData;
+        this.clanMembersCount = state.clanMembers.length;
+      }
+      if (state.playerDetails) {
+        if (this.currPlayerName != state.playerDetails.name) {
+          this.currPlayerName = state.playerDetails.name;
+          this.store.dispatch(new FetchClanMembers(state.playerDetails.clan));
+        }
+      }
+       
     });
   }
 
