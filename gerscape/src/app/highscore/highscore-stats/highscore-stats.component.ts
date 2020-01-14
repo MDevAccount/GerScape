@@ -1,4 +1,4 @@
-import {Component, ViewChild, OnInit} from '@angular/core';
+import {Component, ViewChild, OnInit, OnDestroy} from '@angular/core';
 import { MatSort, MatTableDataSource, MatSortable } from '@angular/material';
 import { AppState } from 'src/app/store/app.reducer';
 import { Store } from '@ngrx/store';
@@ -6,13 +6,14 @@ import { HighscoreService } from '../service/highscore.service';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { DecimalPipe } from '@angular/common';
 import { Skill } from '../model/highscore-light.model';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-highscore-stats',
   templateUrl: 'highscore-stats.component.html',
   styleUrls: ['highscore-stats.component.css'],
 })
-export class HighscoreStatsComponent implements OnInit {
+export class HighscoreStatsComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort, {static:true}) sort: MatSort;
   displayedColumns: string[] = ['icon', 'level', 'xp', 'xpProgress', 'rank'];
   dataSource = new MatTableDataSource<Skill>([]);
@@ -20,6 +21,8 @@ export class HighscoreStatsComponent implements OnInit {
   skillNames = HighscoreService.SKILL_NAMES;
   firstDataSourceCall = true;
   smallScreen = false;
+  storeSubscription: Subscription;
+  isFetchingData;
 
   constructor(
     private store: Store<AppState>,
@@ -30,7 +33,6 @@ export class HighscoreStatsComponent implements OnInit {
   }
 
   ngOnInit() {
-
     this.breakpointObserver.observe(['(max-width: 850px)']).subscribe(result => {
       this.displayedColumns = result.matches ? 
           ['icon', 'level', 'xp', 'rank'] : 
@@ -38,13 +40,17 @@ export class HighscoreStatsComponent implements OnInit {
       this.smallScreen = result.matches;
     });
 
-    this.sort.sort(({ id: 'id', start: 'asc'}) as MatSortable);
     this.dataSource.sort = this.sort;
 
-    this.store.select('highscore').subscribe(state => {
+    this.storeSubscription = this.store.select('highscore').subscribe(state => {
       if (state.highscoreLight)
         this.dataSource.data = state.highscoreLight.skills;
+      this.isFetchingData = state.isFetchingData;
     });
+  }
+
+  ngOnDestroy() {
+    this.storeSubscription.unsubscribe();
   }
 
   getSkillProgressPercentage(skillXp: number) {

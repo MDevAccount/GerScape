@@ -2,6 +2,9 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { RuneMetricsProfile } from 'src/app/highscore/model/runemetrics-profile.model';
 import { HighscoreLight } from 'src/app/highscore/model/highscore-light.model';
+import { FetchSesonalEvents, FetchClanMembers, FetchQuests, FetchPlayerDetails, FetchHighscoreLight, FetchRuneMetricsProfile, SetIsFetchingData, FetchEverything } from '../store/highscore.actions';
+import { AppState } from 'src/app/store/app.reducer';
+import { Store } from '@ngrx/store';
 
 @Injectable()
 export class HighscoreService {
@@ -12,7 +15,7 @@ export class HighscoreService {
     public static URL_RUNEMETRICS_PROFILE = "https://apps.runescape.com/runemetrics/profile/profile?user=#VAR#&activities=20";
     public static URL_PLAYER_QUESTS = "https://apps.runescape.com/runemetrics/quests?user=#VAR#";
     public static URL_PLAYER_DETAILS = "http://services.runescape.com/m=website-data/playerDetails.ws?names=%5B%22#VAR#%22%5D&callback=jQuery000000000000000_0000000000&_=0";
-    public static URL_CLANMEMBERS = "services.runescape.com/m=clan-hiscores/members_lite.ws?clanName=#VAR#"
+    public static URL_CLANMEMBERS = "http://services.runescape.com/m=clan-hiscores/members_lite.ws?clanName=#VAR#"
     public static URL_SESONAL_EVENTS = "http://services.runescape.com/m=temp-hiscores/getRankings.json?player=#VAR#&status=archived";
     public static URL_PLAYER_AVATAR_IMAGE = "http://secure.runescape.com/m=avatar-rs/#VAR#/chat.png"
 
@@ -85,7 +88,8 @@ export class HighscoreService {
     skillXps: number[] = [];
     
     constructor(
-        private http: HttpClient) {
+        private http: HttpClient,
+        private store: Store<AppState>) {
             this.createSkillXpArray();
     }
 
@@ -107,27 +111,17 @@ export class HighscoreService {
         return -1;
     }
 
-    public createHttpGetRequest<T>(param: string, url: string, reponseTypeText?: boolean) {
-        if (reponseTypeText)
-            return this.http.get<T>(
-                HighscoreService.URL_CORS_ANYWHERE + url.replace("#VAR#",  param), 
+    public createHttpGetRequest<T>(useCors: boolean, param: string, url: string, reponseTypeText: boolean) {
+        url = useCors ? HighscoreService.URL_CORS_ANYWHERE +  url.replace("#VAR#",  param) : url.replace("#VAR#",  param);
+        console.log(url);
+        if (reponseTypeText) {
+            return this.http.get<T>(url, 
                     {
                         responseType: 'text' as  'json'
                     }
-                );
-                
-        return this.http.get<T>(HighscoreService.URL_CORS_ANYWHERE + url.replace("#VAR#",  param))
-    }
-
-    hasMaxXp(rsData: RuneMetricsProfile | HighscoreLight) {
-        if (!rsData)
-            return false;
-
-        if (rsData instanceof RuneMetricsProfile)
-            return rsData.totalxp == HighscoreService.MAX_TOTAL_XP;
-
-        if (rsData instanceof HighscoreLight)
-            return rsData.skills[0].xp == HighscoreService.MAX_TOTAL_XP;
+                ); 
+        }      
+        return this.http.get<T>(url);
     }
 
     hasCompLevel(rsData: RuneMetricsProfile) {
@@ -142,28 +136,6 @@ export class HighscoreService {
             return false;
 
         return rsData.skills[0].level == HighscoreService.COMP_LEVEL;
-    }
-
-    hasMaxLevel(rsData: RuneMetricsProfile | HighscoreLight) {
-        if (!rsData)
-            return false;
-
-        if (rsData instanceof RuneMetricsProfile)
-            return rsData.totalskill == HighscoreService.MAX_LEVEL;
-
-        if (rsData instanceof HighscoreLight)
-            return rsData.skills[0].level == HighscoreService.MAX_LEVEL;
-    }
-
-    hasAll120s(rsData: RuneMetricsProfile | HighscoreLight) {
-        if (!rsData)
-            return false;
-
-        if (rsData instanceof RuneMetricsProfile)
-            return rsData.skillvalues.filter(skillValue => !this.isSkill120(skillValue.xp)).length > 0;
-
-        if (rsData instanceof HighscoreLight)
-            return rsData.skills.filter((skillValue, index) => index != 0 && !this.isSkill120(skillValue.xp)).length > 1;
     }
 
     isSkill120(xp: number) {
@@ -201,6 +173,5 @@ export class HighscoreService {
         let arr = [(attack + strength), (2 * mage), (2 * range)];
         return (13/10 * Math.max(...arr) + defence + constitution + ((1/2) * prayer) + ((1/2) * summoning)) / 4;
     }
-
 
 }

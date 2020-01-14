@@ -1,7 +1,8 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
-import { HttpClientModule } from '@angular/common/http';
+import { ServiceWorkerModule } from '@angular/service-worker';
+import { environment } from '../environments/environment';
 
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
@@ -16,6 +17,7 @@ import { HighscoreModule } from './highscore/highscore.module';
 import { appReducer } from './store/app.reducer';
 import { AppRoutingModule } from './app.routing';
 
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -29,7 +31,8 @@ import { AppRoutingModule } from './app.routing';
     AppRoutingModule,
     HighscoreModule,
     EffectsModule.forRoot([HighscoreEffects]),
-    StoreModule.forRoot(appReducer)
+    StoreModule.forRoot(appReducer),
+    ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })
   ],
   exports: [],
   bootstrap: [AppComponent]

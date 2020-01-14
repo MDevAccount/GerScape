@@ -1,20 +1,24 @@
-import { OnInit, Component } from '@angular/core';
+import { OnInit, Component, OnDestroy } from '@angular/core';
 import { AppState } from 'src/app/store/app.reducer';
 import { Store } from '@ngrx/store';
 import { Status } from '../model/quest.model';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-highscore-quests-chart',
     templateUrl: 'highscore-quests-chart.component.html',
     styleUrls: ['highscore-quests-chart.component.css'],
 })
-export class HighscoreQuestsChartComponent implements OnInit {
+export class HighscoreQuestsChartComponent implements OnInit, OnDestroy {
     series: number[] = [];
     labels: string[] = [];
-    hasBeenLoaded = false;
     currPlayerName = "";
+    isFetchingData = false;
     isRuneMetricsProfilePrivate = false;
-
+    questResponse;
+    stats;
+    storeSubscription: Subscription;
+    
     plotOptions = {
         radialBar: {
             dataLabels: {
@@ -43,19 +47,25 @@ export class HighscoreQuestsChartComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.store.select('highscore').subscribe(state => {
+        this.storeSubscription = this.store.select('highscore').subscribe(state => {
 
             this.isRuneMetricsProfilePrivate = state.isRuneMetricsProfilePrivate;
+            this.isFetchingData = state.isFetchingData;
+            if (state.highscoreLight) {
+                this.stats = state.highscoreLight;
+            } else if (state.runemetricsProfile) {
+                this.stats = state.runemetricsProfile;
+            }
 
             let questsDone;
             let questsStarted;
             let questsNotStarted;
 
             if (state.questResponse) {
-                if (state.highscoreLight || state.runemetricsProfile) {
+                this.questResponse = this.questResponse;
+                if (state.highscoreLight || state.runemetricsProfile && state.isFetchingData == false) {
                     let playerName = state.highscoreLight ? state.highscoreLight.name : state.runemetricsProfile.name;
                     if (this.currPlayerName != playerName) {
-                        this.hasBeenLoaded = false;
                         this.series = [];
                         this.labels = [];
                         this.labels.push("ERLEDIGT");
@@ -69,21 +79,21 @@ export class HighscoreQuestsChartComponent implements OnInit {
                         this.series.push(this.getPercentOfAndMax100(questsDone, state.questResponse.quests.length));
                         this.series.push(this.getPercentOfAndMax100(questsStarted, state.questResponse.quests.length));
                         this.series.push(this.getPercentOfAndMax100(questsNotStarted, state.questResponse.quests.length));
-                        this.hasBeenLoaded = true;
                     }
                 }
             }
+
         });
 
+    }
+
+    ngOnDestroy() {
+        this.storeSubscription.unsubscribe();
     }
 
     getPercentOfAndMax100(base: number, from: number) {
         let percent = (base / from) * 100;
         return (percent > 100) ? 100 : Math.round(percent);
-    }
-
-    getFormater(event: any) {
-        return "";
     }
   
    

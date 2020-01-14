@@ -8,12 +8,17 @@
 }
 
 .mat-column-date {
-    width: 150px;
+    width: 50px;
     flex: none;
 }
 
 .mat-column-text {
-    width: 225px;
+    width: 200px;
+    flex: none;
+}
+
+.mat-column-details {
+    width: 300px;
     flex: none;
 }
 

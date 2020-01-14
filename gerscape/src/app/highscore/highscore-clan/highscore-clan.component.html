@@ -1,4 +1,4 @@
-<table mat-table matSort matSortActive="created" [dataSource]="dataSource" class="mat-elevation-z8">
+<table *ngIf="!isFetchingData" mat-table matSort matSortActive="created" [dataSource]="dataSource" class="mat-elevation-z8">
 
     <ng-container matColumnDef="name">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
@@ -24,7 +24,7 @@
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 </table>
 
-<mat-card *ngIf="playerDetails && playerDetails.clan && this.dataSource.data.length == 0">
+<mat-card *ngIf="isFetchingData">
     <mat-spinner>
     </mat-spinner>
   </mat-card>

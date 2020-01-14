@@ -1,20 +1,26 @@
-import { OnInit, Component } from '@angular/core';
+import { OnInit, Component, OnDestroy } from '@angular/core';
 import { HighscoreService } from '../service/highscore.service';
 import { AppState } from 'src/app/store/app.reducer';
 import { Store } from '@ngrx/store';
 import { Skillvalue } from '../model/runemetrics-profile.model';
 import { Skill } from '../model/highscore-light.model';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-highscore-stats-chart',
     templateUrl: 'highscore-stats-chart.component.html',
     styleUrls: ['highscore-stats-chart.component.css'],
 })
-export class HighscoreStatsChartComponent implements OnInit {
+export class HighscoreStatsChartComponent implements OnInit, OnDestroy {
     series: number[] = [];
     labels: string[] = [];
-    hasBeenLoaded = false;
+    isFetchingData = false;
+    isRuneMetricsProfilePrivate = false;
+    questResponse;
+    stats;
     currPlayerName = "";
+    storeSubscription: Subscription;
+    
     plotOptions = {
         radialBar: {
             dataLabels: {
@@ -49,17 +55,24 @@ export class HighscoreStatsChartComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.store.select('highscore').subscribe(state => {
+        this.storeSubscription = this.store.select('highscore').subscribe(state => {
+
+            this.isRuneMetricsProfilePrivate = state.isRuneMetricsProfilePrivate;
+            this.isFetchingData = state.isFetchingData;
+            if (state.highscoreLight) {
+                this.stats = state.highscoreLight;
+            } else if (state.runemetricsProfile) {
+                this.stats = state.runemetricsProfile;
+            }
 
             let level120s;
             let level99s;
             let epMaxSkillsCount;
             let skills;
 
-            if (state.highscoreLight || state.runemetricsProfile) {
+            if (state.highscoreLight || state.runemetricsProfile && this.isFetchingData == false) {
                 let playerName = state.highscoreLight ? state.highscoreLight.name : state.runemetricsProfile.name;
                 if (this.currPlayerName != playerName) {
-                    this.hasBeenLoaded = false;
                     this.series = [];
                     this.labels = [];
                     this.labels.push("ALLES 99");
@@ -81,11 +94,14 @@ export class HighscoreStatsChartComponent implements OnInit {
                     this.series.push(this.getCompPercentDone(skills));
                     this.series.push(this.getPercentOfAndMax100(level120s, HighscoreService.SKILL_AMOUNT));
                     this.series.push(this.getPercentOfAndMax100(epMaxSkillsCount, HighscoreService.SKILL_AMOUNT));
-                    this.hasBeenLoaded = true;
                 }
             }
         });
 
+    }
+
+    ngOnDestroy() {
+        this.storeSubscription.unsubscribe();
     }
 
     getPercentOfAndMax100(base: number, from: number) {

@@ -1,4 +1,4 @@
-<table mat-table matSort matSortActive="created" [dataSource]="dataSource" class="mat-elevation-z8">
+<table *ngIf="!isFetchingData" mat-table matSort matSortActive="created" [dataSource]="dataSource" class="mat-elevation-z8">
 
     <ng-container matColumnDef="date">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Datum</th>
@@ -12,14 +12,15 @@
 
     <ng-container matColumnDef="details">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Beschreibung</th>
-        <td mat-cell *matCellDef="let activity"> {{activity.details}} </td>
+        <td mat-cell *matCellDef="let activity"> <span>{{activity.details}} </span></td>
     </ng-container>
 
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 </table>
 
-<mat-card *ngIf="!(this.dataSource.data.length > 0) && !isRuneMetricsProfilePrivate">
+<mat-card 
+    *ngIf="isFetchingData">
   <mat-spinner>
   </mat-spinner>
 </mat-card>

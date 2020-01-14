@@ -1,4 +1,4 @@
-<table fxFlexFill mat-table matSort matSortActive="created" [dataSource]="dataSource" class="mat-elevation-z8">
+<table *ngIf="!isFetchingData" fxFlexFill mat-table matSort matSortActive="created" [dataSource]="dataSource" class="mat-elevation-z8">
 
     <ng-container matColumnDef="icon">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Fertigkeit</th>
@@ -46,7 +46,8 @@
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 </table>
 
-<mat-card *ngIf="!(this.dataSource.data.length > 0)">
+<mat-card 
+    *ngIf="isFetchingData">
   <mat-spinner>
   </mat-spinner>
 </mat-card>

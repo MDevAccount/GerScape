@@ -1,14 +1,15 @@
-<apx-chart *ngIf="hasBeenLoaded"
+<apx-chart *ngIf="!isFetchingData && !isRuneMetricsProfilePrivate && stats"
     [chart]="{
         show: false,
-        type: 'radialBar', 
+        type: 'radialBar',
+        redrawOnParentResize: false, 
         height: 275,
         offsetY: -25,
         foreColor: '#FFFFFF',
         fontFamily: 'El Messiri',
         animations: {
             enabled: true,
-            speed: 2500
+            speed: 3750
         }
     }"
     [stroke]="{lineCap: 'round'}"
@@ -25,6 +26,6 @@
 </apx-chart>
 
 <div class="mat-spinner-div">
-  <mat-spinner *ngIf="!hasBeenLoaded">
-  </mat-spinner>
-</div>
+    <mat-spinner *ngIf="isFetchingData">
+    </mat-spinner>
+  </div>

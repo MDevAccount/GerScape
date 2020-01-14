@@ -15,7 +15,7 @@ export interface State {
     sesonalEvents: SesonalEvent[],
     clanMembers: ClanMember[],
     isRuneMetricsProfilePrivate: boolean;
-    isClanless: boolean;
+    isFetchingData: boolean;
 }
 
 const initialState: State = {
@@ -25,8 +25,8 @@ const initialState: State = {
     playerDetails: null,
     sesonalEvents: null,
     clanMembers: null,
-    isRuneMetricsProfilePrivate: true,
-    isClanless: true
+    isRuneMetricsProfilePrivate: false,
+    isFetchingData: false
 };
 
 export function highscoreReducer(state = initialState, action: HighscoreActions.HighscoreActions) {
@@ -73,6 +73,11 @@ export function highscoreReducer(state = initialState, action: HighscoreActions.
             return {
                 ...state,
                 isRuneMetricsProfilePrivate: action.payload
+            }
+        case HighscoreActions.SET_IS_FETCHING_DATA:
+            return {
+                ...state,
+                isFetchingData: action.payload
             }
         default:
             return state;
