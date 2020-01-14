@@ -1,7 +1,7 @@
 import {Component, OnInit, OnDestroy} from '@angular/core';
 import { AppState } from '../store/app.reducer';
 import { Store } from '@ngrx/store';
-import { FetchRuneMetricsProfile, FetchSesonalEvents, FetchHighscoreLight, FetchPlayerDetails, FetchQuests, FetchClanMembers, FetchEverything } from './store/highscore.actions';
+import { FetchEverything } from './store/highscore.actions';
 import { HighscoreService } from './service/highscore.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -54,8 +54,7 @@ export class HighscoreComponent implements OnInit, OnDestroy {
     constructor(
         private store: Store<AppState>,
         private route: ActivatedRoute,
-        private router: Router,
-        private highscoreService: HighscoreService) {
+        private router: Router) {
 
     }
 
@@ -64,7 +63,6 @@ export class HighscoreComponent implements OnInit, OnDestroy {
             if (!this.playerName && !this.router.url.endsWith("highscore") && !this.isFetchingData) {
                 let name = this.router.url.split("/")[2];
                 this.store.dispatch(new FetchEverything(name));
-                //this.store.dispatch(new FetchClanMembers("Suchtlurche"));
             } 
             this.activeTabIndex = this.navLinks.indexOf(this.navLinks.find(navLink => navLink.link === '.' + this.router.url));
         });

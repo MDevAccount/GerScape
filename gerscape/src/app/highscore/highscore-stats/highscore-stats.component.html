@@ -1,53 +1,62 @@
-<table *ngIf="!isFetchingData" fxFlexFill mat-table matSort matSortActive="created" [dataSource]="dataSource" class="mat-elevation-z8">
+<div class="sticky-table">
+    <table  fxFlexFill mat-table matSort matSortActive="created" [dataSource]="dataSource" class="mat-elevation-z8">
 
-    <ng-container matColumnDef="icon">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Fertigkeit</th>
-        <td mat-cell *matCellDef="let skill"> 
-            <img 
-                [src]="'./assets/img/skillicons/' + skillIcons[skill.id] + '.png'" 
-                [alt]="skillNames[skill.id]"
-                [matTooltip]="skillNames[skill.id]"
-                height="32" 
-                width="32">
-        </td>
-    </ng-container>
-
-    <ng-container matColumnDef="level">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Level</th>
-        <td mat-cell *matCellDef="let skill"> {{skill.level}} </td>
-    </ng-container>
+        <ng-container matColumnDef="icon">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Fertigkeit</th>
+            <td mat-cell *matCellDef="let skill"> 
+                <img 
+                    [src]="'./assets/img/skillicons/' + skillIcons[skill.id] + '.png'" 
+                    [alt]="skillNames[skill.id]"
+                    [matTooltip]="skillNames[skill.id]"
+                    height="32" 
+                    width="32">
+            </td>
+        </ng-container>
     
-    <ng-container matColumnDef="xp">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Erfahrung</th>
-        <td mat-cell *matCellDef="let skill"> {{skill.xp | number }} </td>
-    </ng-container>
-
-    <ng-container matColumnDef="xpProgress">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Fortschritt zum nächsten Level</th>
-        <td 
-            mat-cell 
-            *matCellDef="let skill"
-            [matTooltip]="getToolTipText(skill.xp)">
-        <div div fxLayout="row" fxLayoutAlign=" center" fxLayoutGap="15px">
-            <mat-progress-bar mode="determinate" [value]="getSkillProgressPercentage(skill.xp)"></mat-progress-bar> 
-            <span style="padding-right: 10px;">
-                {{getPercentToNextLevel(skill.xp) + '%'}}
-            </span>
-        </div>
-        </td>
-    </ng-container>
-
-    <ng-container  matColumnDef="rank">
-        <th [style]="smallScreen ? 'flex: none' : 'flex: auto'" mat-header-cell *matHeaderCellDef mat-sort-header>Rang</th>
-        <td mat-cell *matCellDef="let skill"> {{skill.rank | number }} </td>
-    </ng-container>
+        <ng-container matColumnDef="level">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Level</th>
+            <td mat-cell *matCellDef="let skill"> {{skill.level}} </td>
+        </ng-container>
+        
+        <ng-container matColumnDef="xp">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Erfahrung</th>
+            <td mat-cell *matCellDef="let skill"> {{skill.xp | number }} </td>
+        </ng-container>
     
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-</table>
+        <ng-container matColumnDef="xpProgress">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Fortschritt zum nächsten Level</th>
+            <td 
+                mat-cell 
+                *matCellDef="let skill"
+                [matTooltip]="getToolTipText(skill.xp)">
+            <div div fxLayout="row" fxLayoutAlign=" center" fxLayoutGap="15px">
+                <mat-progress-bar mode="determinate" [value]="getSkillProgressPercentage(skill.xp)"></mat-progress-bar> 
+                <span style="padding-right: 10px;">
+                    {{getPercentToNextLevel(skill.xp) + '%'}}
+                </span>
+            </div>
+            </td>
+        </ng-container>
+    
+        <ng-container  matColumnDef="rank">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Rang</th>
+            <td mat-cell *matCellDef="let skill"> {{skill.rank | number }} </td>
+        </ng-container>
+        
+        <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+</div>
+
 
 <mat-card 
     *ngIf="isFetchingData">
   <mat-spinner>
   </mat-spinner>
+</mat-card>
+
+<mat-card *ngIf="!isFetchingData && dataSource.data.length == 0">
+    <p>
+        Daten konnten nicht geladen werden
+    </p>
 </mat-card>

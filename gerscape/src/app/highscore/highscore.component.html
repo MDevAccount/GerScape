@@ -45,7 +45,7 @@
     </mat-card>
   </div>
   <div gdArea="left-side-charts" fxLayoutGap="10px" div fxLayout="column" fxLayoutAlign="start end">
-    <mat-card style="height: 230px; width: 200px;">
+    <mat-card style="height: 260px; width: 200px;">
       <mat-card-title style="text-align: center;">
         Fertigkeiten
       </mat-card-title>
@@ -53,7 +53,7 @@
         <app-highscore-stats-chart></app-highscore-stats-chart>
       </mat-card-content>
     </mat-card>
-    <mat-card style="height: 230px; width: 200px;">
+    <mat-card style="height: 260px; width: 200px;">
       <mat-card-title style="text-align: center;">
         Abenteuer
       </mat-card-title>
@@ -62,10 +62,10 @@
       </mat-card-content>
     </mat-card>
   </div>
-  <div gdArea="highscore" style="min-height: 1000px; max-width: 850px; min-width: 200px;">
+  <div gdArea="highscore" style="max-width: 850px; min-width: 200px;">
     <mat-card>
       <mat-card-title>
-        <nav mat-tab-nav-bar animationDuration="500ms">
+        <!-- <nav mat-tab-nav-bar animationDuration="500ms">
           <a mat-tab-link
             *ngFor="let navLink of navLinks"
             [routerLink]="playerName + navLink.link"
@@ -73,12 +73,59 @@
             [active]="rla.isActive">  
               {{navLink.label}}  
           </a>
-        </nav>
-        <mat-card>
+        </nav> -->
+         <mat-tab-group animationDuration="500ms">
+          <mat-tab label="Fertigkeiten">
+            <mat-card>
+              <ng-template matTabContent>
+                <mat-card>
+                  <app-highscore-stats></app-highscore-stats>
+                </mat-card>
+              </ng-template>
+            </mat-card>
+          </mat-tab> 
+          <mat-tab label="Aktivitäten">
+            <mat-card>
+              <ng-template matTabContent>
+                <mat-card>
+                  <app-highscore-activities></app-highscore-activities>
+                </mat-card>
+              </ng-template>
+            </mat-card>
+          </mat-tab> 
+          <mat-tab label="Abenteuer">
+            <mat-card>
+              <ng-template matTabContent>
+                <mat-card>
+                  <app-highscore-quests></app-highscore-quests>
+                </mat-card>
+              </ng-template>
+            </mat-card>
+          </mat-tab> 
+          <mat-tab label="Sesonale Events">
+            <mat-card>
+              <ng-template matTabContent>
+                <mat-card>
+                  <app-highscore-sesonal></app-highscore-sesonal>
+                </mat-card>
+              </ng-template>
+            </mat-card>
+          </mat-tab> 
+          <mat-tab label="Clan">
+            <mat-card>
+              <ng-template matTabContent>
+                <mat-card>
+                  <app-highscore-clan></app-highscore-clan>
+                </mat-card>
+              </ng-template>
+            </mat-card>
+          </mat-tab> 
+        </mat-tab-group>
+        <!-- <mat-card>
           <mat-card-content>
             <router-outlet></router-outlet>
           </mat-card-content>
-        </mat-card>
+        </mat-card> -->
       </mat-card-title>
     </mat-card>
   </div>

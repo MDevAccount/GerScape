@@ -6,6 +6,25 @@
     padding-left: 10px;
     padding-right: 10px;
 }
+.mat-column-title {
+    width: 250px;
+    flex: none;
+}
+
+.mat-column-status {
+    width: 100px;
+    flex: none;
+}
+
+.mat-column-difficulty {
+    width: 50px;
+    flex: none;
+}
+
+.mat-column-members {
+    width: 50px;
+    flex: none;
+}
 
 table {
     width: 100%;

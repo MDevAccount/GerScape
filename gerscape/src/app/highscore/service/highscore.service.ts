@@ -1,10 +1,12 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { RuneMetricsProfile } from 'src/app/highscore/model/runemetrics-profile.model';
 import { HighscoreLight } from 'src/app/highscore/model/highscore-light.model';
 import { FetchSesonalEvents, FetchClanMembers, FetchQuests, FetchPlayerDetails, FetchHighscoreLight, FetchRuneMetricsProfile, SetIsFetchingData, FetchEverything } from '../store/highscore.actions';
 import { AppState } from 'src/app/store/app.reducer';
 import { Store } from '@ngrx/store';
+import { catchError } from 'rxjs/operators';
+import { throwError, empty, of } from 'rxjs';
 
 @Injectable()
 export class HighscoreService {
@@ -111,17 +113,26 @@ export class HighscoreService {
         return -1;
     }
 
-    public createHttpGetRequest<T>(useCors: boolean, param: string, url: string, reponseTypeText: boolean) {
-        url = useCors ? HighscoreService.URL_CORS_ANYWHERE +  url.replace("#VAR#",  param) : url.replace("#VAR#",  param);
-        console.log(url);
+    public createHttpGetRequest<T>(param: string, url: string, reponseTypeText: boolean) {
+        url = HighscoreService.URL_CORS_ANYWHERE +  url.replace("#VAR#",  param);
         if (reponseTypeText) {
-            return this.http.get<T>(url, 
-                    {
-                        responseType: 'text' as  'json'
+            return this.http.
+                get<T>(url, {responseType: 'text' as  'json'}).
+                pipe(
+                    catchError(error => {
+                        return of(null);
                     }
-                ); 
+                )
+            ); 
         }      
-        return this.http.get<T>(url);
+        return this.http.
+            get<T>(url).
+            pipe(
+                catchError(error => {
+                    return of(null);
+                }
+            )
+    ); 
     }
 
     hasCompLevel(rsData: RuneMetricsProfile) {

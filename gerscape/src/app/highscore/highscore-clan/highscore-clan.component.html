@@ -1,4 +1,4 @@
-<table *ngIf="!isFetchingData" mat-table matSort matSortActive="created" [dataSource]="dataSource" class="mat-elevation-z8">
+<table mat-table matSort matSortActive="created" [dataSource]="dataSource" class="mat-elevation-z8">
 
     <ng-container matColumnDef="name">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
@@ -34,3 +34,9 @@
           Der Spieler ist in keinem Clan
       </p>
   </mat-card>
+
+<mat-card *ngIf="!isFetchingData && playerDetails && playerDetails.clan && dataSource.data.length == 0">
+    <p>
+        Daten konnten nicht geladen werden
+    </p>
+</mat-card>

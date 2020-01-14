@@ -5,3 +5,36 @@ body { margin: 0; font-family: 'El Messiri'; }
     font-size: 15px;
 }
 
+::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+::-webkit-scrollbar-button {
+  width: 52px;
+  height: 52px;
+}
+::-webkit-scrollbar-thumb {
+  background: #43e424;
+  border: 28px none #ffffff;
+  border-radius: 33px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #393939;
+}
+::-webkit-scrollbar-thumb:active {
+  background: #62aab4;
+}
+::-webkit-scrollbar-track {
+  background: #393939;
+  border: 74px none #ffffff;
+  border-radius: 15px;
+}
+::-webkit-scrollbar-track:hover {
+  background: #43e424;
+}
+::-webkit-scrollbar-track:active {
+  background: #333333;
+}
+::-webkit-scrollbar-corner {
+  background: transparent;
+}

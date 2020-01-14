@@ -1,4 +1,4 @@
-<table *ngIf="!isFetchingData" mat-table matSort matSortActive="created" [dataSource]="dataSource" class="mat-elevation-z8">
+<table mat-table matSort matSortActive="created" [dataSource]="dataSource" class="mat-elevation-z8">
 
     <ng-container matColumnDef="title">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Abenteuer</th>
@@ -36,14 +36,22 @@
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 </table>
 
+<mat-paginator [length]="questsCount" [pageSize]="10" showFirstLastButtons></mat-paginator>
+
 <mat-card 
     *ngIf="isFetchingData">
   <mat-spinner>
   </mat-spinner>
 </mat-card>
 
-<mat-card *ngIf="isRuneMetricsProfilePrivate">
+<mat-card *ngIf="!isFetchingData && isRuneMetricsProfilePrivate">
     <p>
         Der Spieler hat sein RuneMetrics Profil auf privat gestellt :(
+    </p>
+</mat-card>
+
+<mat-card *ngIf="!isFetchingData && dataSource.data.length == 0 && !isRuneMetricsProfilePrivate">
+    <p>
+        Daten konnten nicht geladen werden
     </p>
 </mat-card>

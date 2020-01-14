@@ -31,6 +31,10 @@
     flex: auto;
 }
 
+/* .sticky-table {
+    height: 650px;
+    overflow: auto;
+} */
 table {
     width: 100%;
 }
