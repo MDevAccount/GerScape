@@ -22,7 +22,7 @@ export class HighscoreClanComponent implements OnInit, OnDestroy {
   isLoadingPlayerDetails = false;
   isLoadingClanMembers = false;
   isClanless = false;
-
+  
   constructor(
     private store: Store<AppState>) {
 
@@ -39,7 +39,7 @@ export class HighscoreClanComponent implements OnInit, OnDestroy {
 
       if (state.playerDetails)
         this.playerDetails = state.playerDetails;
-        
+
       if (state.clanMembers) {
         this.dataSource.data = state.clanMembers;
         this.clanMembersCount = state.clanMembers.length;

@@ -1,0 +1,65 @@
+<div fxLayout="column" fxLayoutGap="10px" fxLayoutAlign=" start">
+    <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign=" start" >
+        <mat-card>
+            <mat-card-title>
+                img here
+            </mat-card-title>
+        </mat-card>
+        <mat-card>
+            <mat-card-title>
+                item name here
+            </mat-card-title>
+            <mat-card-subtitle>
+                kategorie here!
+            </mat-card-subtitle>
+        </mat-card>
+    </div>
+    <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign=" start" >
+        <mat-card>
+            <mat-card-title>
+                heute
+            </mat-card-title>
+            <mat-card-subtitle>
+                %
+            </mat-card-subtitle>
+        </mat-card>
+        <mat-card>
+            <mat-card-title>
+               1 woche
+            </mat-card-title>
+            <mat-card-subtitle>
+                %
+            </mat-card-subtitle>
+        </mat-card>
+        <mat-card>
+            <mat-card-title>
+                1 monat
+            </mat-card-title>
+            <mat-card-subtitle>
+                %
+            </mat-card-subtitle>
+        </mat-card>
+        <mat-card>
+            <mat-card-title>
+                6 monat
+            </mat-card-title>
+            <mat-card-subtitle>
+                %
+            </mat-card-subtitle>
+        </mat-card>
+    </div>
+    <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign=" start" >
+        <apx-chart
+            [chart]="chart"
+            [colors]="['#43E226']" 
+            [stroke]="stroke"
+            [markers]="markers"
+            [series]="series"
+            [dataLabels]="{enabled: false}"
+            [fill]="fill1"
+            [grid]="{borderColor: '#FFFFFF'}"
+            [tooltip]="tooltip"
+            [xaxis]="xaxis">
+        </apx-chart> 
+    </div>
+</div>

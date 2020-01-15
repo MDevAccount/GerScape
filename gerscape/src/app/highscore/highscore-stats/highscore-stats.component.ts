@@ -43,9 +43,10 @@ export class HighscoreStatsComponent implements OnInit, OnDestroy {
     this.dataSource.sort = this.sort;
 
     this.storeSubscription = this.store.select('highscore').subscribe(state => {
+      this.isLoadingHighsoreLight = state.isLoadingHighscoreLight;
+
       if (state.highscoreLight) {
         this.dataSource.data = state.highscoreLight.skills;
-        this.isLoadingHighsoreLight = state.isLoadingHighscoreLight;
       } 
     });
   }

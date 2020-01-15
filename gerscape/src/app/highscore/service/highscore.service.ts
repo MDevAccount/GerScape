@@ -181,7 +181,7 @@ export class HighscoreService {
         summoning: number) {
 
         let arr = [(attack + strength), (2 * mage), (2 * range)];
-        return (13/10 * Math.max(...arr) + defence + constitution + ((1/2) * prayer) + ((1/2) * summoning)) / 4;
+        return ((13/10 * Math.max(...arr) + defence + constitution + ((1/2) * prayer) + ((1/2) * summoning)) / 4) - 1;
     }
 
 }

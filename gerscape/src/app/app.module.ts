@@ -16,6 +16,8 @@ import { HighscoreEffects } from './highscore/store/highscore.effects';
 import { HighscoreModule } from './highscore/highscore.module';
 import { appReducer } from './store/app.reducer';
 import { AppRoutingModule } from './app.routing';
+import { GrandExchangeEffects } from './grandexchange/store/grandexchange.effects';
+import { GrandExchangeModule } from './grandexchange/grandexchange.module';
 
 
 @NgModule({
@@ -30,7 +32,13 @@ import { AppRoutingModule } from './app.routing';
     SharedModule,
     AppRoutingModule,
     HighscoreModule,
-    EffectsModule.forRoot([HighscoreEffects]),
+    GrandExchangeModule,
+    EffectsModule.forRoot(
+      [
+        HighscoreEffects,
+        GrandExchangeEffects
+      ]
+    ),
     StoreModule.forRoot(appReducer),
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })
   ],
