@@ -1,59 +1,61 @@
-import {Component, ViewChild, OnInit, OnDestroy} from '@angular/core';
-import { MatSort, MatTableDataSource, MatPaginator } from '@angular/material';
-import { AppState } from 'src/app/store/app.reducer';
-import { Store } from '@ngrx/store';
-import { Quest, Status } from '../model/quest.model';
-import { Subscription } from 'rxjs';
+import { Component, ViewChild, OnInit, OnDestroy } from '@angular/core'
+import { MatSort, MatTableDataSource, MatPaginator } from '@angular/material'
+import { AppState } from 'src/app/store/app.reducer'
+import { Store } from '@ngrx/store'
+import { Quest, Status } from '../model/quest.model'
+import { Subscription, Observable } from 'rxjs'
+import * as HighscoreActions from '../store/highscore.actions'
+import { HighscoreService } from '../service/highscore.service'
 
 @Component({
-  selector: 'app-highscore-quests',
-  templateUrl: 'highscore-quests.component.html',
-  styleUrls: ['highscore-quests.component.css'],
+    selector: 'app-highscore-quests',
+    templateUrl: 'highscore-quests.component.html',
+    styleUrls: ['highscore-quests.component.css'],
 })
 export class HighscoreQuestsComponent implements OnInit, OnDestroy {
-  @ViewChild(MatSort, {static:true}) sort: MatSort;
-  @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
+    @ViewChild(MatSort, { static: true }) sort: MatSort
 
-  displayedColumns: string[] = ['title', 'status', 'difficulty', 'members', 'questPoints'];
-  dataSource = new MatTableDataSource<Quest>([]);
-  isRuneMetricsProfilePrivate = false;
-  storeSubscription: Subscription;
-  questsCount = 0;
-  isLoadingQuests = false;
+    displayedColumns: string[] = ['name', 'status', 'difficulty', 'members', 'questPoints']
+    dataSource = new MatTableDataSource<Quest>([])
 
-  constructor(
-    private store: Store<AppState>) {
+    storeSubscription: Subscription
 
-  }
+    questsCallState$: Observable<string>
+    questsCount = 0
 
-  ngOnInit() {
-    this.dataSource.sort = this.sort;
-    this.dataSource.paginator = this.paginator;
+    constructor(private store: Store<AppState>, private highscoreService: HighscoreService) {}
 
-    this.storeSubscription = this.store.select('highscore').subscribe(state => {
-      this.isRuneMetricsProfilePrivate = state.isRuneMetricsProfilePrivate;
-      this.isLoadingQuests = state.isLoadingQuestResponse;
-      if (state.questResponse) {
-        this.dataSource.data = state.questResponse.quests;
-        this.questsCount = state.questResponse.quests.length;
-      }
-    });
-  }
+    ngOnInit() {
+        this.dataSource.sort = this.sort
 
-  ngOnDestroy() {
-    this.storeSubscription.unsubscribe();
-  }
+        this.questsCallState$ = this.highscoreService.getCallStateOfActionX$(
+            HighscoreActions.FETCH_PLAYERS_QUEST_ACHIEVEMENTS
+        )
 
-  getStatus(quest: Quest) {
-    switch(quest.status) {
-      case Status.Completed: 
-        return "Abgeschlossen";
-      case Status.NotStarted:
-        return "Nicht angefangen";
-      case Status.Started:
-        return "Angefangen";
-      default:
-        return '';
+        this.storeSubscription = this.store
+            .select((state: AppState) => state.highscore.quests)
+            .subscribe((questAchievements) => {
+                if (questAchievements) {
+                    this.dataSource.data = questAchievements
+                    this.questsCount = questAchievements.length
+                }
+            })
     }
-  }
+
+    ngOnDestroy() {
+        if (this.storeSubscription) this.storeSubscription.unsubscribe()
+    }
+
+    getStatus(quest: Quest) {
+        switch (quest.status) {
+            case Status.Completed:
+                return 'Abgeschlossen'
+            case Status.NotStarted:
+                return 'Nicht angefangen'
+            case Status.Started:
+                return 'Angefangen'
+            default:
+                return ''
+        }
+    }
 }

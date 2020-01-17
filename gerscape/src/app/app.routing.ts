@@ -1,32 +1,29 @@
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes, PreloadAllModules } from '@angular/router';
+import { NgModule } from '@angular/core'
+import { RouterModule, Routes, PreloadAllModules } from '@angular/router'
 
 const appRoutes: Routes = [
     {
-        path: '', 
-        redirectTo: '/highscore', 
-        pathMatch: 'full'
+        path: 'highscore',
+        loadChildren: () => import('./highscore/highscore.module').then((m) => m.HighscoreModule),
     },
     {
-        path: 'highscore', 
-        loadChildren: () => import('./highscore/highscore.module')
-        .then(m => m.HighscoreModule)
+        path: 'grandexchange',
+        loadChildren: () =>
+            import('./grandexchange/grandexchange.module').then((m) => m.GrandExchangeModule),
     },
     {
-        path: 'grandexchange', 
-        loadChildren: () => import('./grandexchange/grandexchange.module')
-        .then(m => m.GrandExchangeModule)
+        path: '',
+        redirectTo: '/highscore/stats',
+        pathMatch: 'full',
     },
     {
-        path: '**', 
-        redirectTo: '/highscore'
-    }
-];
+        path: '**',
+        redirectTo: '/highscore/stats',
+    },
+]
 
 @NgModule({
-    imports: [
-        RouterModule.forRoot(appRoutes, {preloadingStrategy: PreloadAllModules})
-    ],
-    exports: [RouterModule]
+    imports: [RouterModule.forRoot(appRoutes, { preloadingStrategy: PreloadAllModules })],
+    exports: [RouterModule],
 })
-export class AppRoutingModule {}  
+export class AppRoutingModule {}

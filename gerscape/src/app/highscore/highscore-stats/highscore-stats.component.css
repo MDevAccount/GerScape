@@ -1,47 +1,47 @@
 .mat-cell {
-    padding-left: 10px;
-    padding-right: 10px;
-} 
+  padding-left: 10px;
+  padding-right: 10px;
+}
 .mat-header-cell {
-    padding-left: 10px;
-    padding-right: 10px;
+  padding-left: 10px;
+  padding-right: 10px;
 }
 
 .mat-column-icon {
-    width: 50px;
-    flex: none;
+  width: 50px;
+  flex: none;
 }
 
 .mat-column-level {
-    width: 50px;
-    flex: none;
+  width: 50px;
+  flex: none;
 }
 
 .mat-column-xp {
-    width: 75px;
-    flex: none;
+  width: 75px;
+  flex: none;
 }
 
 .mat-column-rank {
-    width: 50px;
-    flex: initial;
+  width: 50px;
+  flex: initial;
 }
 
 .mat-column-xpProgress {
-    flex: auto;
+  flex: auto;
 }
 
-/* .sticky-table {
-    height: 650px;
-    overflow: auto;
-} */
+.sticky-table-container {
+  height: 481px;
+  overflow: auto;
+}
 table {
-    width: 100%;
+  width: 100%;
 }
 
 mat-card {
-    display: flex; 
-    justify-content: center; 
-    align-items: center;
-    height: 110px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 110px;
 }

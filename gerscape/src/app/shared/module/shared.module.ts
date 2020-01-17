@@ -1,11 +1,13 @@
 import { NgModule } from '@angular/core';
-import { MatTableModule, MatSortModule, MatPaginatorModule, MatMenuModule, MatButtonModule, MatToolbarModule, MatTabsModule, MatProgressSpinnerModule, MatCardModule, MatProgressBarModule, MatTooltipModule, MatGridTile, MatGridListModule } from '@angular/material';
+import { MatTableModule, MatSortModule, MatPaginatorModule, MatMenuModule, MatButtonModule, MatToolbarModule, MatTabsModule, MatProgressSpinnerModule, MatCardModule, MatProgressBarModule, MatTooltipModule, MatGridTile, MatGridListModule, MatExpansionModule } from '@angular/material';
 import { FlexLayoutModule } from '@angular/flex-layout';
+
 import { registerLocaleData, CommonModule } from '@angular/common';
 import localeDe from '@angular/common/locales/de';
 
 import { NgApexchartsModule } from 'ng-apexcharts';
 import { HttpClientModule } from '@angular/common/http';
+import { ScrollingModule } from '@angular/cdk/scrolling';
 
 registerLocaleData(localeDe);
 
@@ -23,6 +25,8 @@ registerLocaleData(localeDe);
         MatProgressBarModule,
         MatTooltipModule,
         FlexLayoutModule,
+        ScrollingModule,
+        MatExpansionModule,
         NgApexchartsModule,
         CommonModule,
         HttpClientModule

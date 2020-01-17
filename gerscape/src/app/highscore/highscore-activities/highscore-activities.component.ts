@@ -1,49 +1,48 @@
-import {Component, ViewChild, OnInit, OnDestroy} from '@angular/core';
-import { MatSort, MatTableDataSource, MatPaginator } from '@angular/material';
-import { Activity } from '../model/runemetrics-profile.model';
-import { AppState } from 'src/app/store/app.reducer';
-import { Store } from '@ngrx/store';
-import { Subscription } from 'rxjs';
+import { Component, ViewChild, OnInit, OnDestroy } from '@angular/core'
+import { MatSort, MatTableDataSource, MatPaginator } from '@angular/material'
+import { AppState } from 'src/app/store/app.reducer'
+import { Store } from '@ngrx/store'
+import { Subscription, Observable } from 'rxjs'
+import { Activity } from '../model/activity.model'
+import { HighscoreService } from '../service/highscore.service'
+import * as HighscoreActions from '../store/highscore.actions'
 
 @Component({
-  selector: 'app-highscore-activities',
-  templateUrl: 'highscore-activities.component.html',
-  styleUrls: ['highscore-activities.component.css'],
+    selector: 'app-highscore-activities',
+    templateUrl: 'highscore-activities.component.html',
+    styleUrls: ['highscore-activities.component.css'],
 })
 export class HighscoreActivitiesComponent implements OnInit, OnDestroy {
-  @ViewChild(MatSort, {static:true}) sort: MatSort;
-  @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
+    @ViewChild(MatSort, { static: true }) sort: MatSort
 
-  displayedColumns: string[] = ['date', 'text', 'details'];
-  dataSource = new MatTableDataSource<Activity>([]);
-  isRuneMetricsProfilePrivate = false;
-  storeSubscription: Subscription;
-  activitiesCount = 0;
-  isLoadingRuneMetricsProfile = false;
+    displayedColumns: string[] = ['date', 'text', 'details']
+    dataSource = new MatTableDataSource<Activity>([])
 
-  constructor(
-    private store: Store<AppState>) {
+    storeSubscription: Subscription
 
-  }
+    activitiesCallState$: Observable<string>
+    activitiesCount = 0
 
-  ngOnInit() {
-    this.dataSource.sort = this.sort;
-    this.dataSource.paginator = this.paginator;
+    constructor(private store: Store<AppState>, private highscoreService: HighscoreService) {}
 
-    this.storeSubscription = this.store.select('highscore').subscribe(state => {
-      this.isRuneMetricsProfilePrivate = state.isRuneMetricsProfilePrivate;
-      this.isLoadingRuneMetricsProfile = state.isLoadingRuneMetricsProfile;
+    ngOnInit() {
+        this.dataSource.sort = this.sort
 
-      if (state.runemetricsProfile) {
-        this.dataSource.data = state.runemetricsProfile.activities;
-        this.activitiesCount = state.runemetricsProfile.activities.length;
-      }
-    });
-  }
+        this.activitiesCallState$ = this.highscoreService.getCallStateOfActionX$(
+            HighscoreActions.FETCH_PLAYERS_RUNE_METRICS_PROFILE
+        )
 
-  ngOnDestroy() {
-    this.storeSubscription.unsubscribe();
-  }
+        this.storeSubscription = this.store
+            .select((state: AppState) => state.highscore.runeMetricsProfile)
+            .subscribe((runeMetricsProfile) => {
+                if (runeMetricsProfile && runeMetricsProfile.activities) {
+                    this.dataSource.data = runeMetricsProfile.activities
+                    this.activitiesCount = runeMetricsProfile.activities.length
+                }
+            })
+    }
 
- 
+    ngOnDestroy() {
+        if (this.storeSubscription) this.storeSubscription.unsubscribe()
+    }
 }

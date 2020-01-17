@@ -1,46 +1,47 @@
-import {Component, ViewChild, OnInit, OnDestroy} from '@angular/core';
-import { MatSort, MatTableDataSource, MatPaginator } from '@angular/material';
-import { AppState } from 'src/app/store/app.reducer';
-import { Store } from '@ngrx/store';
-import { SesonalEvent } from '../model/sesonal-event.model';
-import { Subscription } from 'rxjs';
+import { Component, ViewChild, OnInit, OnDestroy } from '@angular/core'
+import { MatSort, MatTableDataSource, MatPaginator } from '@angular/material'
+import { AppState } from 'src/app/store/app.reducer'
+import { Store } from '@ngrx/store'
+import { SesonalEvent } from '../model/sesonal-event.model'
+import { Subscription, Observable } from 'rxjs'
+import * as HighscoreActions from '../store/highscore.actions'
+import { HighscoreService } from '../service/highscore.service'
 
 @Component({
-  selector: 'app-highscore-sesonal',
-  templateUrl: 'highscore-sesonal.component.html',
-  styleUrls: ['highscore-sesonal.component.css'],
+    selector: 'app-highscore-sesonal',
+    templateUrl: 'highscore-sesonal.component.html',
+    styleUrls: ['highscore-sesonal.component.css'],
 })
 export class HighscoreSesonalEventsComponent implements OnInit, OnDestroy {
-  @ViewChild(MatSort, {static:true}) sort: MatSort;
-  @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
-  displayedColumns: string[] = ['startDate', 'endDate', 'title', 'score_raw', 'rank'];
-  dataSource = new MatTableDataSource<SesonalEvent>([]);
-  isRuneMetricsProfilePrivate = false;
-  storeSubscription: Subscription;
-  sesonalEventsCount = 0;
-  isLoadingSesonalEvents;
+    @ViewChild(MatSort, { static: true }) sort: MatSort
+    displayedColumns: string[] = ['startDate', 'endDate', 'title', 'score_raw', 'rank']
 
-  constructor(
-    private store: Store<AppState>) {
+    dataSource = new MatTableDataSource<SesonalEvent>([])
+    storeSubscription: Subscription
 
-  }
+    sesonalEventsCallState$: Observable<string>
+    sesonalEventsCount = 0
 
-  ngOnInit() {
-    this.dataSource.sort = this.sort;
-    this.dataSource.paginator = this.paginator;
+    constructor(private store: Store<AppState>, private highscoreService: HighscoreService) {}
 
-    this.storeSubscription = this.store.select('highscore').subscribe(state => {
-      if (state.sesonalEvents) {
-        this.dataSource.data = state.sesonalEvents;
-        this.sesonalEventsCount = state.sesonalEvents.length;
-      }
-      this.isRuneMetricsProfilePrivate = state.isRuneMetricsProfilePrivate;
-      this.isLoadingSesonalEvents = state.isLoadingSesonalEvents;
-    });
-  }
+    ngOnInit() {
+        this.dataSource.sort = this.sort
 
-  ngOnDestroy() {
-    this.storeSubscription.unsubscribe();
-  }
- 
+        this.sesonalEventsCallState$ = this.highscoreService.getCallStateOfActionX$(
+            HighscoreActions.FETCH_PLAYERS_SESONAL_EVENTS
+        )
+
+        this.storeSubscription = this.store
+            .select((state: AppState) => state.highscore.sesonalEvents)
+            .subscribe((sesonalEvents) => {
+                if (sesonalEvents) {
+                    this.dataSource.data = sesonalEvents
+                    this.sesonalEventsCount = sesonalEvents.length
+                }
+            })
+    }
+
+    ngOnDestroy() {
+        if (this.storeSubscription) this.storeSubscription.unsubscribe()
+    }
 }

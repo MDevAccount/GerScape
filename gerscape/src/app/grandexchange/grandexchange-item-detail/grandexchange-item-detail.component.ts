@@ -377,11 +377,11 @@ export class GrandExchangeItemDetailComponent implements OnInit, OnDestroy {
           speed: 1500,
           animateGradually: {
               enabled: true,
-              delay: 10000
+              delay: 1500 // width while zooming gets smaller and wider
           },
           dynamicAnimation: {
               enabled: true,
-              speed: 10000
+              speed: 1500 // width while zooming gets smaller and wider
           } 
         },
         toolbar: {

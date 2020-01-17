@@ -1,4 +1,4 @@
-<apx-chart *ngIf="!isRuneMetricsProfilePrivate && stats && !isLoadingQuests"
+<apx-chart *ngIf="(questsCallState$ | async) == 'LOADED' && quests.length > 0" 
     [chart]="{
         show: false,
         type: 'radialBar', 
@@ -26,6 +26,6 @@
 </apx-chart>
 
 <div class="mat-spinner-div">
-  <mat-spinner *ngIf="isLoadingQuests && !isRuneMetricsProfilePrivate">
+  <mat-spinner *ngIf="(questsCallState$ | async) == 'LOADING'">
   </mat-spinner>
 </div>

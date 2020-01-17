@@ -1,15 +1,83 @@
-<div fxLayout="column" fxLayoutAlign=" start" fxLayoutGap="10px">
+<!-- <div fxLayout="column" fxLayoutAlign=" start" fxLayoutGap="10px">
     <mat-card>
         <mat-card-title>
             textbox here
         </mat-card-title>
-        <mat-card-content style="min-height: 500px;">
-            <div fxLayout="column" fxLayoutAlign=" start" fxLayoutGap="5px">
-                <app-grandexchange-list-item></app-grandexchange-list-item>
-                <app-grandexchange-list-item></app-grandexchange-list-item>
-                <app-grandexchange-list-item></app-grandexchange-list-item>
-                <app-grandexchange-list-item></app-grandexchange-list-item>
-            </div>
+        <mat-card-content style="height: 500px;">
+            <cdk-virtual-scroll-viewport itemSize="50" class="example-viewport">
+                <div *cdkVirtualFor="let item of items" class="example-item">   
+                    <app-grandexchange-list-item></app-grandexchange-list-item>
+                </div>
+              </cdk-virtual-scroll-viewport>
         </mat-card-content>
     </mat-card>
+</div> -->
+
+<div [class]="isLoadingGrandExchangeItems ?'' : 'sticky-table'">
+    <table  fxFlexFill mat-table matSort matSortActive="created" [dataSource]="dataSource" class="mat-elevation-z8">
+
+        <ng-container matColumnDef="member">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Mitglied</th>
+            <td mat-cell *matCellDef="let itemResponse"> 
+                <img 
+                    [src]="'./assets/img/' + (itemResponse.item.members == 'true' ? 'membership-icon' : 'F2P-icon' ) + '.png'" 
+                    [alt]="(itemResponse.item.members == 'true' ? 'Mitglied' : 'Frei' )"
+                    [matTooltip]="(itemResponse.item.members == 'true' ? 'Mitglied' : 'Frei')"
+                    height="32" 
+                    width="32">
+            </td>
+        </ng-container>
+    
+        <ng-container matColumnDef="icon">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
+            <td mat-cell *matCellDef="let itemResponse"> 
+                <img 
+                    [src]="itemResponse.item.icon" 
+                    [alt]="itemResponse.item.name"
+                    [matTooltip]="itemResponse.item.name"
+                    height="32" 
+                    width="32">
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+            <td mat-cell *matCellDef="let itemResponse"> {{itemResponse.item.name}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="price">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Preis</th>
+            <td mat-cell *matCellDef="let itemResponse"> {{itemResponse.item.price}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="today">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Heute</th>
+            <td mat-cell *matCellDef="let itemResponse"> {{itemResponse.item.today.change}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="30d">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>30T</th>
+            <td mat-cell *matCellDef="let itemResponse"> {{itemResponse.item.day.change}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="90day">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>90T</th>
+            <td mat-cell *matCellDef="let itemResponse"> {{itemResponse.item.day.change}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="180day">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>180T</th>
+            <td mat-cell *matCellDef="let itemResponse"> {{itemResponse.item.day.change}} </td>
+        </ng-container>
+        
+        <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
 </div>
+
+
+<mat-card 
+    *ngIf="isLoadingGrandExchangeItems">
+  <mat-spinner>
+  </mat-spinner>
+</mat-card>

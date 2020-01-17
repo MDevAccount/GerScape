@@ -1,119 +1,133 @@
-import {Component, OnInit, OnDestroy} from '@angular/core';
-import { Location } from '@angular/common';
-import { AppState } from '../store/app.reducer';
-import { Store } from '@ngrx/store';
-import { FetchHighscoreLight, FetchPlayerDetails, FetchQuests, FetchRuneMetricsProfile, FetchSesonalEvents, FetchClanMembers } from './store/highscore.actions';
-import { HighscoreService } from './service/highscore.service';
-import { Router, ActivatedRoute } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { Component, OnInit, OnDestroy, HostBinding, ViewChild, ElementRef } from '@angular/core'
+import { Location } from '@angular/common'
+import { AppState } from '../store/app.reducer'
+import { Store } from '@ngrx/store'
+import { HighscoreService } from './service/highscore.service'
+import { Router, ActivatedRoute, Params } from '@angular/router'
+import { Subscription, of, Observable } from 'rxjs'
+
+import { switchMap } from 'rxjs/operators'
+import { trigger, state, transition, animate, style } from '@angular/animations'
+import { HighscoreLightProfile } from './model/highscore-light-profile.model'
+import * as HighscoreActions from './store/highscore.actions'
 
 @Component({
-  selector: 'app-highscore',
-  templateUrl: 'highscore.component.html',
-  styleUrls: ['highscore.component.css'],
+    selector: 'app-highscore',
+    templateUrl: 'highscore.component.html',
+    styleUrls: ['highscore.component.css'],
+    animations: [
+        //<-----
+        trigger('flyIn', [
+            state(
+                'normal',
+                style({
+                    transform: 'translateY(0) scale(1)',
+                })
+            ),
+            state(
+                'tabPos',
+                style({
+                    transform: 'translateY(500px) scale(0.0)',
+                })
+            ),
+            //the 2 lines above can be rewritten.. the arrow shows the direction of the animation.. so..
+            transition('normal => flying', animate(400)), // from which to which state do we transition and how long should it take
+            //transition('flying => normal', animate(400)), // from which to which state do we transition and how long should it take
+            //if we want to animate shrunken to anything and from anything we can use the wildcard operator *
+        ]),
+    ],
 })
 export class HighscoreComponent implements OnInit, OnDestroy {
-    currPlayerName;
-    selectedTabIndex = 0;
-    totalLevel;
-    totalXp;
-    combatLevel;
-    rank;
-    playerName;
-    avatarUrl = "./assets/img/default_chat.png";
-    isRuneMetricsProfilePrivate = false;
-    storeSubscription: Subscription;
-    routeSubscription: Subscription;
-    activeTabIndex = 0;
-    navLinks = [
-        {
-            link: 'stats',
-            index: 0
-        }, 
-        {
-            link: 'activities',
-            index: 1
-        }, 
-        {
-            link: 'quests',
-            index: 2
-        }, 
-        {
-            link: 'events',
-            index: 3
-        }, 
-        {
-            link: 'clan',
-            index: 4
-        }, 
-    ];
+    state = 'normal' //<-- can be a number or anything else
+
+    storeSubscription: Subscription
+    routeSubscription: Subscription
+
+    tabs = ['stats', 'activities', 'quests', 'events', 'clan']
+    tabDescs = ['Fertigkeiten', 'Aktivitäten', 'Abenteuer', 'Sesonale Events', 'Clan']
+    selectedTabIndex = 0
+
+    avatarUrl = HighscoreService.DEFAULT_AVATAR_IMAGE
+
+    highscoreLightCallState$: Observable<string>
+    highscoreLight: HighscoreLightProfile = null
 
     constructor(
         private store: Store<AppState>,
         private route: ActivatedRoute,
         private router: Router,
-        private location: Location) {
-
-    }
+        private location: Location,
+        private highscoreService: HighscoreService
+    ) {}
 
     ngOnInit() {
-        this.routeSubscription = this.route.params.subscribe(params => {
-            //TODO add last request sent to reducer so we can check here..
-            if (!this.playerName && !this.router.url.endsWith("highscore")) {
-                this.setTabAccordingToUrl(this.router.url);
-                let name = this.router.url.split("/")[2];
-                this.store.dispatch(new FetchHighscoreLight(name));
-                this.store.dispatch(new FetchPlayerDetails(name));
-                this.store.dispatch(new FetchQuests(name));
-                this.store.dispatch(new FetchRuneMetricsProfile(name));
-                this.store.dispatch(new FetchSesonalEvents(name));
-            } 
-        });
+        this.highscoreLightCallState$ = this.highscoreService.getCallStateOfActionX$(
+            HighscoreActions.FETCH_PLAYERS_LIGHT_HIGHSCORE
+        )
 
-        this.storeSubscription = this.store.select('highscore').subscribe(state => {
-            this.isRuneMetricsProfilePrivate = state.isRuneMetricsProfilePrivate;
-            if (state.runemetricsProfile) {
-                this.combatLevel = state.runemetricsProfile.combatlevel;
-                this.totalLevel = state.runemetricsProfile.totalskill;
-                this.totalXp = state.runemetricsProfile.totalxp;
-                this.rank = state.runemetricsProfile.rank;
-                this.playerName = state.runemetricsProfile.name;
-                this.avatarUrl = HighscoreService.URL_PLAYER_AVATAR_IMAGE.replace("#VAR#", state.runemetricsProfile.name);
-            } else if (state.highscoreLight) {
-                this.combatLevel = state.highscoreLight.combatLevel;
-                this.totalXp = state.highscoreLight.totalXp;
-                this.totalLevel = state.highscoreLight.totalLevel;
-                this.rank = state.highscoreLight.totalRank;
-                this.playerName = state.highscoreLight.name;
-                this.avatarUrl = HighscoreService.URL_PLAYER_AVATAR_IMAGE.replace("#VAR#", state.highscoreLight.name);
-            }
-            if (state.playerDetails) {
-                if (this.currPlayerName != state.playerDetails.name) {
-                  this.currPlayerName = state.playerDetails.name;
-                  this.store.dispatch(new FetchClanMembers(state.playerDetails.clan));
+        this.storeSubscription = this.store
+            .select((state: AppState) => state.highscore.highscoreLightProfile)
+            .subscribe((highscoreLight) => {
+                if (highscoreLight) {
+                    this.highscoreLight = highscoreLight
                 }
-              }
-        });
+            })
+
+        console.log(this.route.snapshot.params.typeId)
+        this.routeSubscription = this.route.params.subscribe((params) => {
+            const routeFragments = this.router.url.split('/')
+            console.log('playername: ', params)
+            console.log('fragments: ', routeFragments)
+
+            this.store.dispatch(new HighscoreActions.FetchPlayersClanName('mischa'))
+
+            this.store.dispatch(new HighscoreActions.FetchClanMembersOfClan('suchtlurche'))
+
+            this.store.dispatch(new HighscoreActions.FetchPlayersRuneMetricsProfile('mischa'))
+
+            this.store.dispatch(new HighscoreActions.FetchPlayersLightHighscore('mischa'))
+
+            this.store.dispatch(new HighscoreActions.FetchPlayersQuestAchievements('mischa'))
+
+            this.store.dispatch(new HighscoreActions.FetchPlayersSesonalEvents('mischa'))
+
+            // if (routeFragments.length > 1) {
+            //     this.selectedTabIndex = this.tabs.indexOf(routeFragments[2]);
+            // }
+            // console.log(routeFragments);
+            // console.log("hj8dsfhz879sdhf")
+            // console.log(params);
+            // if (params && params.playername && params.playername.length > 0) {
+            //     console.log("hj8dsfhz879sdhf")
+            //     console.log(params);
+            //     if (this.highscoreService.currentPlayerName != params.playername) {
+            //         console.log("fzuzuif");
+            //         this.playerName = params.playername;
+            //         this.highscoreService.fetchEverything(params.playerName);
+            //     }
+            // }
+        })
     }
 
     ngOnDestroy() {
-        this.storeSubscription.unsubscribe();
-        this.routeSubscription.unsubscribe();
+        if (this.storeSubscription) this.storeSubscription.unsubscribe()
+        if (this.routeSubscription) this.routeSubscription.unsubscribe()
     }
 
-    setTabAccordingToUrl(url: string) {
-        let splittedUrl = this.router.url.split("/");
-        if (splittedUrl[3]) {
-            let link = this.router.url.split("/")[3];
-            this.navLinks.filter(navLink => navLink.link == link).map(link => {
-                this.selectedTabIndex = link.index;
-            })
-        }
+    onChangeTab(newTabIndex: number) {
+        this.state == 'normal' ? (this.state = 'flying') : (this.state = 'normal')
+        this.selectedTabIndex = newTabIndex
+
+        //this.location.go("highscore/" + this.tabs[newTabIndex] + '/' + this.playerName);
+        //this.router.navigate([this.tabs[newTabIndex]], {relativeTo: this.route});
     }
 
-    setUrlManuallyTo(event) {
-        let splittedUrl = this.router.url.split("/");
-        let url = this.router.url.substring(0, this.router.url.length - splittedUrl[splittedUrl.length - 1].length)
-        this.location.go(url + this.navLinks[event.index].link);
-    }
+    // setUrlManuallyTo(event) {
+    //     let splittedUrl = this.router.url.split("/");
+    //     if (splittedUrl.length == 3 && splittedUrl[0] == "highscore") {
+    //         let url = this.router.url.substring(0, this.router.url.length - splittedUrl[splittedUrl.length - 1].length)
+    //         this.location.go("highscore" + this.navLinks[event.index].link);
+    //     }
+
+    // }
 }

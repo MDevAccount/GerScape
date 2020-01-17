@@ -1,136 +1,103 @@
-import * as HighscoreActions from './highscore.actions';
-import { HighscoreLight } from 'src/app/highscore/model/highscore-light.model';
-import { PlayerDetails } from 'src/app/highscore/model/player-details.model';
-import { RuneMetricsProfile } from 'src/app/highscore/model/runemetrics-profile.model';
-import { QuestResponse } from 'src/app/highscore/model/quest.model';
-import { SesonalEvent } from '../model/sesonal-event.model';
-import { ClanMember } from '../model/clanmember.model';
+import * as HighscoreActions from './highscore.actions'
+import { PlayerProfile } from '../model/player-profile.model'
+import { CallState } from 'src/app/shared/model/call-state.model'
+import { LoadingState } from '../../shared/model/call-state.model'
+import { RuneMetricsProfile } from '../model/runemetrics-profile.model'
+import { HighscoreLightProfile } from '../model/highscore-light-profile.model'
+import { ClanMember } from '../model/clan-member.model'
+import { Quest } from '../model/quest.model'
+import { Activity } from '../model/activity.model'
+import { SesonalEvent } from '../model/sesonal-event.model'
 
-
-export interface State {
-    runemetricsProfile: RuneMetricsProfile,
-    questResponse: QuestResponse,
-    highscoreLight: HighscoreLight,
-    playerDetails: PlayerDetails,
-    sesonalEvents: SesonalEvent[],
-    clanMembers: ClanMember[],
-
-    isRuneMetricsProfilePrivate: boolean,
-    isClanless: boolean,
-
-    isLoadingRuneMetricsProfile: boolean,
-    isLoadingQuestResponse: boolean,
-    isLoadingHighscoreLight: boolean,
-    isLoadingPlayerDetails: boolean,
-    isLoadingSesonalEvents: boolean,
-    isLoadingClanMembers: boolean
+export interface HighscoreState {
+    runeMetricsProfile: RuneMetricsProfile
+    highscoreLightProfile: HighscoreLightProfile
+    clanName: string
+    clanMembers: ClanMember[]
+    quests: Quest[]
+    activities: Activity[]
+    sesonalEvents: SesonalEvent[]
+    callStates: CallState[]
 }
 
-const initialState: State = {
-    runemetricsProfile: null,
-    questResponse: null,
-    highscoreLight: null,
-    playerDetails: null,
-    sesonalEvents: null,
+const initialState: HighscoreState = {
+    runeMetricsProfile: null,
+    highscoreLightProfile: null,
+    clanName: null,
     clanMembers: null,
-    isRuneMetricsProfilePrivate: false,
-    isClanless: false,
-    isLoadingRuneMetricsProfile: false,
-    isLoadingQuestResponse: false,
-    isLoadingHighscoreLight: false,
-    isLoadingPlayerDetails: false,
-    isLoadingSesonalEvents: false,
-    isLoadingClanMembers: false
-};
+    quests: null,
+    activities: null,
+    sesonalEvents: null,
+    callStates: [
+        new CallState(LoadingState.INIT, HighscoreActions.FETCH_PLAYERS_CLAN_NAME, ''),
+        new CallState(LoadingState.INIT, HighscoreActions.FETCH_CLAN_MEMBERS_OF_CLAN, ''),
+        new CallState(LoadingState.INIT, HighscoreActions.FETCH_PLAYERS_QUEST_ACHIEVEMENTS, ''),
+        new CallState(LoadingState.INIT, HighscoreActions.FETCH_PLAYERS_LIGHT_HIGHSCORE, ''),
+        new CallState(LoadingState.INIT, HighscoreActions.FETCH_PLAYERS_RUNE_METRICS_PROFILE, ''),
+        new CallState(LoadingState.INIT, HighscoreActions.FETCH_PLAYERS_SESONAL_EVENTS, ''),
+    ],
+}
 
 export function highscoreReducer(state = initialState, action: HighscoreActions.HighscoreActions) {
-
-    switch(action.type) {
-
-        case HighscoreActions.SET_HIGHSCORE_LIGHT:
+    switch (action.type) {
+        case HighscoreActions.SET_CALL_STATE_OF_ACTION_X:
+            const callStateCopy = updateActionCallState(
+                [...state.callStates],
+                action.payload.actionType,
+                action.payload.loadingState
+            )
             return {
                 ...state,
-                highscoreLight: action.payload
+                callStates: callStateCopy,
             }
-
-        case HighscoreActions.SET_PLAYER_DETAILS:
+        case HighscoreActions.SET_PLAYERS_RUNE_METRICS_PROFILE:
             return {
                 ...state,
-                playerDetails: action.payload
-            };
-
-        case HighscoreActions.SET_QUESTS:
-            return {
-                ...state,
-                questResponse: action.payload
-            };   
-
-        case HighscoreActions.SET_RUNEMETRICS_PROFILE:
-            return {
-                ...state,
-                runemetricsProfile: action.payload
-            };   
-
-        case HighscoreActions.SET_SESONAL_EVENTS:
-            return {
-                ...state,
-                sesonalEvents: action.payload
-            };  
-
-        case HighscoreActions.SET_CLAN_MEMBERS:
-            return {
-                ...state,
-                clanMembers: action.payload
-            };
-        
-        case HighscoreActions.SET_IS_RUNEMETRICS_PROFILE_PRIVATE:
-            return {
-                ...state,
-                isRuneMetricsProfilePrivate: action.payload
+                runeMetricsProfile: action.payload,
             }
-
-        case HighscoreActions.SET_IS_CLANLESS:
+        case HighscoreActions.SET_CLAN_MEMBERS_OF_CLAN:
             return {
                 ...state,
-                isClanless: action.payload
+                clanMembers: action.payload,
             }
-
-        case HighscoreActions.IS_LOADING_RUNEMETRICS_PROFILE:
+        case HighscoreActions.SET_PLAYERS_CLAN_NAME:
             return {
                 ...state,
-                isLoadingRuneMetricsProfile: action.payload
+                HighscoreActions: action.payload,
             }
-
-        case HighscoreActions.IS_LOADING_QUEST_RESPONSE:
+        case HighscoreActions.SET_PLAYERS_LIGHT_HIGHSCORE:
             return {
                 ...state,
-                isLoadingQuestResponse: action.payload
+                highscoreLightProfile: action.payload,
             }
-
-        case HighscoreActions.SET_IS_LOADING_HIGHSCORE_LIGHT:
+        case HighscoreActions.SET_PLAYERS_SESONAL_EVENTS:
             return {
                 ...state,
-                isLoadingHighscoreLight: action.payload
+                sesonalEvents: action.payload,
             }
-
-        case HighscoreActions.SET_IS_LOADING_PLAYER_DETAILS:
+        case HighscoreActions.SET_PLAYERS_QUEST_ACHIEVEMENTS:
             return {
                 ...state,
-                isLoadingPlayerDetails: action.payload
+                quests: action.payload,
             }
-
-        case HighscoreActions.SET_IS_LOADING_SESONAL_EVENTS:
-            return {
-                ...state,
-                isLoadingSesonalEvents: action.payload
-            }
-
-        case HighscoreActions.SET_IS_LOADING_CLAN_MEMBERS:
-            return {
-                ...state,
-                isLoadingClanMembers: action.payload
-            }
-        default:
-            return state;
+        default: {
+            return state
+        }
     }
+}
+
+function updateActionCallState(
+    callStates: CallState[],
+    type: string,
+    newLoadingState: LoadingState
+) {
+    let callStatesCopy = [...callStates]
+    let callState = callStatesCopy.filter((callState) => callState.actionType == type)[0]
+    if (callState) {
+        callStatesCopy = callStatesCopy.filter((callState) => callState.actionType != type)
+        callState.state = newLoadingState
+        callStatesCopy.push(callState)
+    }
+
+    return callStatesCopy
 }

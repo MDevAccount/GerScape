@@ -1,0 +1,11 @@
+.example-viewport {
+    height: 500px;
+    width: 325px;
+    border: 4px solid #333333;
+  }
+
+  
+.sticky-table {
+    height: 592px;
+    overflow: auto;
+} 

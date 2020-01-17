@@ -1,237 +1,121 @@
-import { Action } from '@ngrx/store';
-import { HighscoreLight } from 'src/app/highscore/model/highscore-light.model';
-import { QuestResponse } from 'src/app/highscore/model/quest.model';
-import { RuneMetricsProfile } from 'src/app/highscore/model/runemetrics-profile.model';
-import { PlayerDetails } from '../model/player-details.model';
-import { SesonalEvent } from '../model/sesonal-event.model';
-import { ClanMember } from '../model/clanmember.model';
+import { Action } from '@ngrx/store'
+import { Activity } from '../model/activity.model'
+import { Skill } from '../model/skill.model'
+import { Quest } from '../model/quest.model'
+import { SesonalEvent } from '../model/sesonal-event.model'
+import { ClanMember } from '../model/clan-member.model'
+import { HighscoreLightProfile } from '../model/highscore-light-profile.model'
+import { RuneMetricsProfile } from '../model/runemetrics-profile.model'
+import { LoadingState } from 'src/app/shared/model/call-state.model'
 
+export const FETCH_PLAYERS_RUNE_METRICS_PROFILE = '[Highscore] Fetch players runemetrics profile'
+export const FETCH_PLAYERS_CLAN_NAME = '[Highscore] Fetch players clan name'
+export const FETCH_PLAYERS_LIGHT_HIGHSCORE = '[Highscore] Fetch players light highscore'
+export const FETCH_PLAYERS_QUEST_ACHIEVEMENTS = '[Highscore] Fetch players quest achievements'
+export const FETCH_PLAYERS_SESONAL_EVENTS = '[Highscore] Fetch players sesonal events'
+export const FETCH_CLAN_MEMBERS_OF_CLAN = '[Highscore] Fetch clan members of clan'
 
-export const SET_PLAYER_DETAILS = "[Highscore] Set player details";
-export const SET_CLAN_MEMBERS = "[Highscore] Set clan members";
-export const SET_SESONAL_EVENTS = "[Highscore] Set sesonal events";
-export const SET_QUESTS = "[Highscore] Set quests";
-export const SET_HIGHSCORE_LIGHT = "[Highscore] Set highscore light";
-export const SET_RUNEMETRICS_PROFILE = "[Highscore] Set runemetrics profile";
+export const SET_PLAYERS_RUNE_METRICS_PROFILE = '[Highscore] Set players runemetrics profile'
+export const SET_PLAYERS_CLAN_NAME = '[Highscore] Set players clan name'
+export const SET_PLAYERS_LIGHT_HIGHSCORE = '[Highscore] Set players light highscore'
+export const SET_PLAYERS_QUEST_ACHIEVEMENTS = '[Highscore] Set players quest achievements'
+export const SET_PLAYERS_SESONAL_EVENTS = '[Highscore] Set players sesonal events'
+export const SET_CLAN_MEMBERS_OF_CLAN = '[Highscore] Set clan members of clan'
 
-export const FETCH_PLAYER_DETAILS = "[Highscore] Fetch player details";
-export const FETCH_CLAN_MEMBERS = "[Highscore] Fetch clan members";
-export const FETCH_SESONAL_EVENTS = "[Highscore] Fetch sesonal events";
-export const FETCH_HIGHSCORE_LIGHT = "[Highscore] Fetch highscore light";
-export const FETCH_QUESTS = "[Highscore] Fetch quests";
-export const FETCH_RUNEMETRICS_PROFILE = "[Highscore] Fetch runemetrics profile";
+export const SET_CALL_STATE_OF_ACTION_X = '[Highscore] Set callstate of action x'
 
-export const SET_IS_RUNEMETRICS_PROFILE_PRIVATE = "[Highscore] Set is runemetrics profile private";
-export const SET_IS_CLANLESS = "[Highscore] Set is clanless";
+export class SetPlayerRuneMetricsProfile implements Action {
+    readonly type = SET_PLAYERS_RUNE_METRICS_PROFILE
 
-export const IS_LOADING_RUNEMETRICS_PROFILE = "[Highscore] Set is loading runemetrics profile";
-export const IS_LOADING_QUEST_RESPONSE = "[Highscore] Set is loading quest reponse";
-export const SET_IS_LOADING_HIGHSCORE_LIGHT = "[Highscore] Set is loading highscore light";
-export const SET_IS_LOADING_PLAYER_DETAILS = "[Highscore] Set is loading player details";
-export const SET_IS_LOADING_SESONAL_EVENTS = "[Highscore] Set is loading sesonal events";
-export const SET_IS_LOADING_CLAN_MEMBERS = "[Highscore] Set is loading clan members";
-
-export const FETCH_ANY = "[Highscore] Fetch any";
-
-export class SetIsClanless implements Action {
-    readonly type = SET_IS_CLANLESS;
-
-    constructor(public payload: boolean) {
-
-    }
+    constructor(public payload: RuneMetricsProfile) {}
 }
 
-export class SetIsLoadingRuneMetricsProfile implements Action {
-    readonly type = IS_LOADING_RUNEMETRICS_PROFILE;
+export class SetPlayersClanName implements Action {
+    readonly type = SET_PLAYERS_CLAN_NAME
 
-    constructor(public payload: boolean) {
-
-    }
+    constructor(public payload: string) {}
 }
 
-export class SetIsLoadingQuestResponse implements Action {
-    readonly type = IS_LOADING_QUEST_RESPONSE;
+export class SetPlayersLightHighscore implements Action {
+    readonly type = SET_PLAYERS_LIGHT_HIGHSCORE
 
-    constructor(public payload: boolean) {
-
-    }
+    constructor(public payload: HighscoreLightProfile) {}
 }
 
-export class SetIsLoadingHighscoreLight implements Action {
-    readonly type = SET_IS_LOADING_HIGHSCORE_LIGHT;
+export class SetPlayerQuestAchievements implements Action {
+    readonly type = SET_PLAYERS_QUEST_ACHIEVEMENTS
 
-    constructor(public payload: boolean) {
-
-    }
+    constructor(public payload: Quest[]) {}
 }
 
-export class SetIsLoadingPlayerDetails implements Action {
-    readonly type = SET_IS_LOADING_PLAYER_DETAILS;
+export class SetPlayersSesonalEvents implements Action {
+    readonly type = SET_PLAYERS_SESONAL_EVENTS
 
-    constructor(public payload: boolean) {
-
-    }
+    constructor(public payload: SesonalEvent[]) {}
 }
 
-export class SetIsLoadingSesonalEvents implements Action {
-    readonly type = SET_IS_LOADING_SESONAL_EVENTS;
+export class SetClanMembersOfClan implements Action {
+    readonly type = SET_CLAN_MEMBERS_OF_CLAN
 
-    constructor(public payload: boolean) {
-
-    }
+    constructor(public payload: ClanMember[]) {}
 }
 
-export class SetIsLoadingClanMembers implements Action {
-    readonly type = SET_IS_LOADING_CLAN_MEMBERS;
+export class FetchClanMembersOfClan implements Action {
+    readonly type = FETCH_CLAN_MEMBERS_OF_CLAN
 
-    constructor(public payload: boolean) {
-
-    }
-}
-export class SetHighscoreLight implements Action {
-    readonly type = SET_HIGHSCORE_LIGHT;
-
-    constructor(public payload: HighscoreLight) {
-
-    }
+    constructor(public payload: string) {}
 }
 
-export class FetchHighscoreLight implements Action {
-    readonly type = FETCH_HIGHSCORE_LIGHT;
-    
-    constructor(public payload: string) {
+export class FetchPlayersLightHighscore implements Action {
+    readonly type = FETCH_PLAYERS_LIGHT_HIGHSCORE
 
-    }
+    constructor(public payload: string) {}
 }
 
-export class SetIsRuneMetricsProfilePrivate implements Action {
-    readonly type = SET_IS_RUNEMETRICS_PROFILE_PRIVATE;
-    
-    constructor(public payload: boolean) {
+export class FetchPlayersClanName implements Action {
+    readonly type = FETCH_PLAYERS_CLAN_NAME
 
-    }
+    constructor(public payload: string) {}
 }
 
-export class SetPlayerDetails implements Action {
-    readonly type = SET_PLAYER_DETAILS;
+export class FetchPlayersRuneMetricsProfile implements Action {
+    readonly type = FETCH_PLAYERS_RUNE_METRICS_PROFILE
 
-    constructor(public payload: PlayerDetails) {
-
-    }
+    constructor(public payload: string) {}
 }
 
-export class FetchPlayerDetails implements Action {
-    readonly type = FETCH_PLAYER_DETAILS;
+export class FetchPlayersQuestAchievements implements Action {
+    readonly type = FETCH_PLAYERS_QUEST_ACHIEVEMENTS
 
-    constructor(public payload: string) {
-
-    }
+    constructor(public payload: string) {}
 }
 
-export class SetQuestResponse implements Action {
-    readonly type = SET_QUESTS;
+export class FetchPlayersSesonalEvents implements Action {
+    readonly type = FETCH_PLAYERS_SESONAL_EVENTS
 
-    constructor(public payload: QuestResponse) {
-
-    }
+    constructor(public payload: string) {}
 }
 
-export class FetchQuests implements Action {
-    readonly type = FETCH_QUESTS;
+export class SetCallStateOfActionX implements Action {
+    readonly type = SET_CALL_STATE_OF_ACTION_X
 
-    constructor(public payload: string) {
-
-    }
+    constructor(
+        public payload: { loadingState: LoadingState; actionType: string; errorMsg: string }
+    ) {}
 }
 
-export class SetSesonalEvents implements Action {
-    readonly type = SET_SESONAL_EVENTS;
-
-    constructor(public payload: SesonalEvent[]) {
-
-    }
-}
-
-export class FetchSesonalEvents implements Action {
-    readonly type = FETCH_SESONAL_EVENTS;
-
-    constructor(public payload: string) {
-
-    }
-}
-
-export class SetClanMembers implements Action {
-    readonly type = SET_CLAN_MEMBERS;
-
-    constructor(public payload: ClanMember[]) {
-
-    }
-}
-
-export class FetchClanMembers implements Action {
-    readonly type = FETCH_CLAN_MEMBERS;
-
-    constructor(public payload: string) {
-
-    }
-}
-
-export class SetRuneMetricsProfile implements Action {
-    readonly type = SET_RUNEMETRICS_PROFILE;
-
-    constructor(public payload: RuneMetricsProfile) {
-
-    }
-
-}
-
-export class FetchRuneMetricsProfile implements Action {
-    readonly type = FETCH_RUNEMETRICS_PROFILE;
-
-    constructor(public payload: string) {
-
-    }
-}
-
-export class FetchAny implements Action {
-    readonly type = FETCH_ANY;
-
-    constructor(public payload: 
-        {
-            searchParam: string,
-            highscoreAction: string,
-            highscoreActionAction: HighscoreActions,
-            payLoadNullAction: HighscoreActions,
-            startLoadingAction: HighscoreActions,
-            stopLoadingAction: HighscoreActions,
-            url: string,
-            responseType: any,
-            isTextResponse: boolean,
-        }) {
-
-    }
-}
-
-export type HighscoreActions = 
-    | FetchClanMembers
-    | SetClanMembers
-    | FetchSesonalEvents
-    | SetSesonalEvents
-    | FetchSesonalEvents
-    | FetchQuests
-    | SetQuestResponse
-    | FetchPlayerDetails
-    | SetPlayerDetails
-    | SetHighscoreLight
-    | FetchHighscoreLight
-    | FetchRuneMetricsProfile
-    | SetRuneMetricsProfile
-    | SetIsRuneMetricsProfilePrivate
-    | SetIsClanless
-    | SetIsLoadingClanMembers
-    | SetIsLoadingHighscoreLight
-    | SetIsLoadingQuestResponse
-    | SetIsLoadingRuneMetricsProfile
-    | SetIsLoadingSesonalEvents
-    | SetIsLoadingPlayerDetails
-    | FetchAny;
+export type HighscoreActions =
+    | SetPlayerRuneMetricsProfile
+    | SetClanMembersOfClan
+    | SetPlayerQuestAchievements
+    | SetPlayersLightHighscore
+    | SetPlayersSesonalEvents
+    | SetPlayersClanName
+    | FetchClanMembersOfClan
+    | FetchPlayersLightHighscore
+    | SetCallStateOfActionX
+    | FetchClanMembersOfClan
+    | FetchPlayersClanName
+    | FetchPlayersRuneMetricsProfile
+    | FetchPlayersQuestAchievements
+    | FetchPlayersSesonalEvents
