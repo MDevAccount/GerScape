@@ -77,7 +77,11 @@
     <mat-card>
         <mat-card-title>
             <nav mat-tab-nav-bar>
-                <a mat-tab-link *ngFor="let tab of tabs; let i = index" [routerLink]="tab" routerLinkActive #rla="routerLinkActive"
+                <a 
+                    mat-tab-link 
+                    *ngFor="let tab of tabs; let i = index" 
+                    [routerLink]="tab + '/' + routeFragments[3]" 
+                    routerLinkActive #rla="routerLinkActive"
                     [active]="rla.isActive">
                     {{tabDescs[i]}}
                 </a>

@@ -123,15 +123,21 @@ export class HighscoreEffects {
             return this.http
                 .get<string>(url, { responseType: 'text' as 'json' })
                 .pipe(
-                    map((highscoreLight) => {
+                    map((highscoreLightResponse) => {
                         this.highscoreService.dispatchCallStateOfActionX(
                             LoadingState.LOADED,
                             action.type
                         )
-
-                        return new HighscoreActions.SetPlayersLightHighscore(
-                            this.handleHighscoreLightResponse(highscoreLight, action.payload)
+                        const highscoreLight = this.handleHighscoreLightResponse(
+                            highscoreLightResponse,
+                            action.payload
                         )
+                        if (!highscoreLight)
+                            this.highscoreService.dispatchCallStateOfActionX(
+                                LoadingState.ERROR,
+                                action.type
+                            )
+                        return new HighscoreActions.SetPlayersLightHighscore(highscoreLight)
                     }),
                     catchError((error) => {
                         console.log(error)
@@ -164,9 +170,18 @@ export class HighscoreEffects {
                             LoadingState.LOADED,
                             action.type
                         )
-                        return new HighscoreActions.SetPlayersClanName(
-                            this.handlePlayerClanNameResponse(playerClanData)
-                        )
+                        const clanName = this.handlePlayerClanNameResponse(playerClanData)
+                        if (!clanName) {
+                            this.highscoreService.dispatchCallStateOfActionX(
+                                LoadingState.ERROR,
+                                action.type
+                            )
+                        } else if (clanName.length > 0) {
+                            this.store.dispatch(
+                                new HighscoreActions.FetchClanMembersOfClan(clanName)
+                            )
+                        }
+                        return new HighscoreActions.SetPlayersClanName(clanName)
                     }),
                     catchError((error) => {
                         console.log(error)
@@ -191,14 +206,20 @@ export class HighscoreEffects {
             )
             this.highscoreService.dispatchCallStateOfActionX(LoadingState.LOADING, action.type)
             return this.http.get<RuneMetricsResponse>(url).pipe(
-                map((runeMetricsData) => {
+                map((handleRuneMetricsResponse) => {
                     this.highscoreService.dispatchCallStateOfActionX(
                         LoadingState.LOADED,
                         action.type
                     )
-                    return new HighscoreActions.SetPlayerRuneMetricsProfile(
-                        this.handleRuneMetricsResponse(runeMetricsData)
+                    const runeMetricsProfile = this.handleRuneMetricsResponse(
+                        handleRuneMetricsResponse
                     )
+                    if (!runeMetricsProfile)
+                        this.highscoreService.dispatchCallStateOfActionX(
+                            LoadingState.ERROR,
+                            action.type
+                        )
+                    return new HighscoreActions.SetPlayerRuneMetricsProfile(runeMetricsProfile)
                 }),
                 catchError((error) => {
                     console.log(error)
@@ -228,9 +249,13 @@ export class HighscoreEffects {
                         LoadingState.LOADED,
                         action.type
                     )
-                    return new HighscoreActions.SetPlayerQuestAchievements(
-                        this.handleQuestsResponse(questResponse)
-                    )
+                    const quests = this.handleQuestsResponse(questResponse)
+                    if (!quests)
+                        this.highscoreService.dispatchCallStateOfActionX(
+                            LoadingState.ERROR,
+                            action.type
+                        )
+                    return new HighscoreActions.SetPlayerQuestAchievements(quests)
                 }),
                 catchError((error) => {
                     console.log(error)
@@ -260,9 +285,13 @@ export class HighscoreEffects {
                         LoadingState.LOADED,
                         action.type
                     )
-                    return new HighscoreActions.SetPlayersSesonalEvents(
-                        this.handleSesonalEventsResponse(sesonalEventsResponse)
-                    )
+                    const sesonalEvents = this.handleSesonalEventsResponse(sesonalEventsResponse)
+                    if (!sesonalEvents)
+                        this.highscoreService.dispatchCallStateOfActionX(
+                            LoadingState.ERROR,
+                            action.type
+                        )
+                    return new HighscoreActions.SetPlayersSesonalEvents(sesonalEvents)
                 }),
                 catchError((error) => {
                     console.log(error)
@@ -339,6 +368,7 @@ export class HighscoreEffects {
     //     );
 
     handleSesonalEventsResponse(res: SesonalEventsResponse[]) {
+        if (!res) return null
         let sesonalEvents: SesonalEvent[] = []
         res.forEach((seRes) => {
             sesonalEvents.push(
@@ -355,6 +385,9 @@ export class HighscoreEffects {
     }
 
     handleQuestsResponse(res: QuestResponse) {
+        if (!res) return null
+        if (!res.quests) return null
+        if (res.quests.length == 0) return null
         let quests: Quest[] = []
         res.quests.forEach((quest) => {
             quests.push(
@@ -395,6 +428,8 @@ export class HighscoreEffects {
     }
 
     handleRuneMetricsResponse(res: RuneMetricsResponse) {
+        if (!res) return null
+        if (!res.skillvalues) return null
         let skills: Skill[] = []
         res.skillvalues.forEach((skillValue) => {
             skills.push(

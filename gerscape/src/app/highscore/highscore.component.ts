@@ -52,11 +52,12 @@ export class HighscoreComponent implements OnInit, OnDestroy {
     highscoreLightCallState$: Observable<string>
     highscoreLight: HighscoreLightProfile = null
 
+    routeFragments = ['', '', '', '']
+
     constructor(
         private store: Store<AppState>,
         private route: ActivatedRoute,
         private router: Router,
-        private location: Location,
         private highscoreService: HighscoreService
     ) {}
 
@@ -73,39 +74,16 @@ export class HighscoreComponent implements OnInit, OnDestroy {
                 }
             })
 
-        console.log(this.route.snapshot.params.typeId)
         this.routeSubscription = this.route.params.subscribe((params) => {
-            const routeFragments = this.router.url.split('/')
-            console.log('playername: ', params)
-            console.log('fragments: ', routeFragments)
-
-            this.store.dispatch(new HighscoreActions.FetchPlayersClanName('mischa'))
-
-            this.store.dispatch(new HighscoreActions.FetchClanMembersOfClan('suchtlurche'))
-
-            this.store.dispatch(new HighscoreActions.FetchPlayersRuneMetricsProfile('mischa'))
-
-            this.store.dispatch(new HighscoreActions.FetchPlayersLightHighscore('mischa'))
-
-            this.store.dispatch(new HighscoreActions.FetchPlayersQuestAchievements('mischa'))
-
-            this.store.dispatch(new HighscoreActions.FetchPlayersSesonalEvents('mischa'))
-
-            // if (routeFragments.length > 1) {
-            //     this.selectedTabIndex = this.tabs.indexOf(routeFragments[2]);
-            // }
-            // console.log(routeFragments);
-            // console.log("hj8dsfhz879sdhf")
-            // console.log(params);
-            // if (params && params.playername && params.playername.length > 0) {
-            //     console.log("hj8dsfhz879sdhf")
-            //     console.log(params);
-            //     if (this.highscoreService.currentPlayerName != params.playername) {
-            //         console.log("fzuzuif");
-            //         this.playerName = params.playername;
-            //         this.highscoreService.fetchEverything(params.playerName);
-            //     }
-            // }
+            if (this.routeFragments[3] != this.router.url.split('/')[3]) {
+                this.routeFragments = this.router.url.split('/')
+                const playerName = this.routeFragments[3]
+                this.store.dispatch(new HighscoreActions.FetchPlayersClanName(playerName))
+                this.store.dispatch(new HighscoreActions.FetchPlayersRuneMetricsProfile(playerName))
+                this.store.dispatch(new HighscoreActions.FetchPlayersLightHighscore(playerName))
+                this.store.dispatch(new HighscoreActions.FetchPlayersQuestAchievements(playerName))
+                this.store.dispatch(new HighscoreActions.FetchPlayersSesonalEvents(playerName))
+            }
         })
     }
 

@@ -45,7 +45,7 @@
     </p>
 </mat-card>
 
-<mat-card *ngIf="(clanMembersCallState$ | async) == 'INIT' || (clanNameCallState$ | async) == 'INIT'">
+<mat-card *ngIf="(clanNameCallState$ | async) == 'INIT'">
     <p>
         Noch kein Spielerprofil geladen
     </p>

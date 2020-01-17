@@ -16,24 +16,54 @@ const routes: Routes = [
         component: HighscoreComponent,
         children: [
             {
-                path: 'stats/:playername',
+                path: 'stats',
                 component: HighscoreStatsComponent,
+                children: [
+                    {
+                        path: ':playername',
+                        component: HighscoreStatsComponent,
+                    },
+                ],
             },
             {
                 path: 'activities/:playername',
                 component: HighscoreActivitiesComponent,
+                children: [
+                    {
+                        path: ':playername',
+                        component: HighscoreStatsComponent,
+                    },
+                ],
             },
             {
                 path: 'quests/:playername',
                 component: HighscoreQuestsComponent,
+                children: [
+                    {
+                        path: ':playername',
+                        component: HighscoreStatsComponent,
+                    },
+                ],
             },
             {
                 path: 'events/:playername',
                 component: HighscoreSesonalEventsComponent,
+                children: [
+                    {
+                        path: ':playername',
+                        component: HighscoreStatsComponent,
+                    },
+                ],
             },
             {
                 path: 'clan/:playername',
                 component: HighscoreClanComponent,
+                children: [
+                    {
+                        path: ':playername',
+                        component: HighscoreStatsComponent,
+                    },
+                ],
             },
         ],
     },
