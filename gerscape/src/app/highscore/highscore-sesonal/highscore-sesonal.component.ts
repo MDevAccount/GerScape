@@ -1,5 +1,5 @@
 import { Component, ViewChild, OnInit, OnDestroy } from '@angular/core'
-import { MatSort, MatTableDataSource, MatPaginator } from '@angular/material'
+import { MatSort, MatTableDataSource } from '@angular/material'
 import { AppState } from 'src/app/store/app.reducer'
 import { Store } from '@ngrx/store'
 import { SesonalEvent } from '../model/sesonal-event.model'
@@ -14,7 +14,8 @@ import { HighscoreService } from '../service/highscore.service'
 })
 export class HighscoreSesonalEventsComponent implements OnInit, OnDestroy {
     @ViewChild(MatSort, { static: true }) sort: MatSort
-    displayedColumns: string[] = ['startDate', 'endDate', 'title', 'score_raw', 'rank']
+
+    displayedColumns: string[] = ['startDate', 'endDate', 'title', 'score', 'rank']
 
     dataSource = new MatTableDataSource<SesonalEvent>([])
     storeSubscription: Subscription

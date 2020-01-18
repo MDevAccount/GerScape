@@ -3,42 +3,37 @@ import { HttpClient } from '@angular/common/http'
 import { AppState } from 'src/app/store/app.reducer'
 import { Store } from '@ngrx/store'
 import { Skill } from '../model/skill.model'
-import { PlayerProfile } from '../model/player-profile.model'
-import { HighscoreState } from '../store/highscore.reducer'
-import { map } from 'rxjs/operators'
-import { of } from 'rxjs'
 import { LoadingState } from 'src/app/shared/model/call-state.model'
 import * as HighscoreActions from '../store/highscore.actions'
+import { Role } from '../model/clan-member.model'
 
 @Injectable()
 export class HighscoreService {
-    public static URL_CORS_ANYWHERE = 'https://cors-anywhere.herokuapp.com/'
-
-    public static URL_PLAYER_HIGHSCORE_LIGHT =
+    static URL_PLAYER_HIGHSCORE_LIGHT =
         'https://secure.runescape.com/m=hiscore/index_lite.ws?player=#VAR#'
-    public static URL_RUNEMETRICS_PROFILE =
+    static URL_RUNEMETRICS_PROFILE =
         'https://apps.runescape.com/runemetrics/profile/profile?user=#VAR#&activities=20'
-    public static URL_PLAYER_QUESTS = 'https://apps.runescape.com/runemetrics/quests?user=#VAR#'
-    public static URL_PLAYER_CLAN_NAME =
+    static URL_PLAYER_QUESTS = 'https://apps.runescape.com/runemetrics/quests?user=#VAR#'
+    static URL_PLAYER_CLAN_NAME =
         'http://services.runescape.com/m=website-data/playerDetails.ws?names=%5B%22#VAR#%22%5D&callback=jQuery000000000000000_0000000000&_=0'
 
-    public static URL_CLANMEMBERS =
+    static URL_CLANMEMBERS =
         'http://services.runescape.com/m=clan-hiscores/members_lite.ws?clanName=#VAR#'
-    public static URL_SESONAL_EVENTS =
+    static URL_SESONAL_EVENTS =
         'http://services.runescape.com/m=temp-hiscores/getRankings.json?player=#VAR#&status=archived'
-    public static URL_PLAYER_AVATAR_IMAGE = 'http://secure.runescape.com/m=avatar-rs/#VAR#/chat.png'
+    static URL_PLAYER_AVATAR_IMAGE = 'http://secure.runescape.com/m=avatar-rs/#VAR#/chat.png'
 
-    public static DEFAULT_AVATAR_IMAGE = './assets/img/default_chat.png'
+    static DEFAULT_AVATAR_IMAGE = './assets/img/default_chat.png'
 
-    public static MAX_TOTAL_XP = 5400000000
-    public static MAX_SKILL_XP = 200000000
-    public static MAX_LEVEL = 2673
-    public static COMP_LEVEL = 2778
-    public static ALL_120_TOTAL_LEVEL = 3240
-    public static XP_AT_120 = 104273167
-    public static SKILL_AMOUNT = 27
+    static MAX_TOTAL_XP = 5400000000
+    static MAX_SKILL_XP = 200000000
+    static MAX_LEVEL = 2673
+    static COMP_LEVEL = 2778
+    static ALL_120_TOTAL_LEVEL = 3240
+    static XP_AT_120 = 104273167
+    static SKILL_AMOUNT = 27
 
-    public static SKILL_NAMES = [
+    static SKILL_NAMES = [
         'Angriff',
         'Verteidigung',
         'Stärke',
@@ -98,6 +93,74 @@ export class HighscoreService {
         'invention',
     ]
 
+    static ROLE_ICONS = [
+        {
+            image: 'questionmark.png',
+            gerRole: 'Unbekannt',
+            engRole: Role.Unknown,
+        },
+        {
+            image: 'Admin-clan-rank.png',
+            gerRole: 'Admin',
+            engRole: Role.Admin,
+        },
+        {
+            image: 'Owner-clan-rank.png',
+            gerRole: 'Owner',
+            engRole: Role.Owner,
+        },
+        {
+            image: 'Captain-clan-rank.png',
+            gerRole: 'Kaptian',
+            engRole: Role.Captain,
+        },
+        {
+            image: 'Coordinator-clan-rank.png',
+            gerRole: 'Koordinator',
+            engRole: Role.Coordinator,
+        },
+        {
+            image: 'Corporal-clan-rank.png',
+            gerRole: 'Korporal',
+            engRole: Role.Corporal,
+        },
+        {
+            image: 'Deputy-owner-clan-rank.png',
+            gerRole: 'Admin-Stellvertreter',
+            engRole: Role.DeputyOwner,
+        },
+        {
+            image: 'General-clan-rank.png',
+            gerRole: 'General',
+            engRole: Role.General,
+        },
+        {
+            image: 'Lieutenant-clan-rank.png',
+            gerRole: 'Leutnant',
+            engRole: Role.Lieutenant,
+        },
+        {
+            image: 'Organiser-clan-rank.png',
+            gerRole: 'Organisator',
+            engRole: Role.Organiser,
+        },
+        {
+            image: 'Overseer-clan-rank.png',
+            gerRole: 'Aufseher',
+            engRole: Role.Overseer,
+        },
+        {
+            image: 'Sergeant-clan-rank.png',
+            gerRole: 'Sergeant',
+            engRole: Role.Sergeant,
+        },
+        {
+            image: 'Recruit-clan-rank.png',
+            gerRole: 'Rekrut',
+            engRole: Role.Recruit,
+        },
+    ]
+
     skillXps: number[] = []
     currentPlayerName = ''
     highscoreState$
@@ -119,9 +182,6 @@ export class HighscoreService {
                 errorMsg: errorMsg,
             })
         )
-    }
-    getCompleteUrl(url: string, param: string) {
-        return HighscoreService.URL_CORS_ANYWHERE + url.replace('#VAR#', param)
     }
 
     getCallStateOfActionX$(actionType: string) {

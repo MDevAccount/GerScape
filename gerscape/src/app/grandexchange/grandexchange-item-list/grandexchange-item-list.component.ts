@@ -4,7 +4,7 @@ import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 import { AppState } from 'src/app/store/app.reducer';
 import { MatSort, MatTableDataSource } from '@angular/material';
-import { ItemResponse } from '../model/grandexchange-item.model';
+import { GrandExchangeItem } from '../model/grandexchange-item.model';
 
 @Component({
     selector: 'app-grandexchange-item-list',
@@ -13,7 +13,7 @@ import { ItemResponse } from '../model/grandexchange-item.model';
   })
 export class GrandExchangeItemListComponent implements OnInit, OnDestroy {
     @ViewChild(MatSort, {static:true}) sort: MatSort;
-    dataSource = new MatTableDataSource<ItemResponse>([]);
+    dataSource = new MatTableDataSource<GrandExchangeItem>([]);
     displayedColumns: string[] = ['member', 'icon', 'name', 'price', 'today', '30d', '90day', '180day'];
     storeSubscription: Subscription;
     routeSubscription: Subscription;

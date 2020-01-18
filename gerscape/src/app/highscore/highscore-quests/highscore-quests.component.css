@@ -7,7 +7,7 @@
     padding-right: 10px;
 }
 
-.mat-column-title {
+.mat-column-name {
     width: 350px;
     flex: none;
 }
@@ -25,11 +25,6 @@
 .mat-column-members {
     width: 50px;
     flex: none;
-}
-
-.sticky-table-container {
-  height: 481px;
-  overflow: auto;
 }
 
 table {

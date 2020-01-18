@@ -1,5 +1,4 @@
 import * as HighscoreActions from './highscore.actions'
-import { PlayerProfile } from '../model/player-profile.model'
 import { CallState } from 'src/app/shared/model/call-state.model'
 import { LoadingState } from '../../shared/model/call-state.model'
 import { RuneMetricsProfile } from '../model/runemetrics-profile.model'
@@ -63,7 +62,7 @@ export function highscoreReducer(state = initialState, action: HighscoreActions.
         case HighscoreActions.SET_PLAYERS_CLAN_NAME:
             return {
                 ...state,
-                HighscoreActions: action.payload,
+                clanName: action.payload,
             }
         case HighscoreActions.SET_PLAYERS_LIGHT_HIGHSCORE:
             return {

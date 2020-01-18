@@ -5,6 +5,10 @@ body { margin: 0; font-family: 'El Messiri'; }
     font-size: 15px;
 }
 
+.mat-header-cell {
+    border-bottom-color: #43e424 !important;
+}
+
 ::-webkit-scrollbar {
   width: 9px;
   height: 9px;

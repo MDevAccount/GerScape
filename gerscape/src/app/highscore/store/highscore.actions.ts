@@ -1,6 +1,4 @@
 import { Action } from '@ngrx/store'
-import { Activity } from '../model/activity.model'
-import { Skill } from '../model/skill.model'
 import { Quest } from '../model/quest.model'
 import { SesonalEvent } from '../model/sesonal-event.model'
 import { ClanMember } from '../model/clan-member.model'

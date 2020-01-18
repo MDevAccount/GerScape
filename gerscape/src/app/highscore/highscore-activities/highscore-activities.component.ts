@@ -1,5 +1,5 @@
 import { Component, ViewChild, OnInit, OnDestroy } from '@angular/core'
-import { MatSort, MatTableDataSource, MatPaginator } from '@angular/material'
+import { MatSort, MatTableDataSource } from '@angular/material'
 import { AppState } from 'src/app/store/app.reducer'
 import { Store } from '@ngrx/store'
 import { Subscription, Observable } from 'rxjs'

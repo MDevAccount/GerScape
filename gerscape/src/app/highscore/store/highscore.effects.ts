@@ -4,10 +4,8 @@ import { switchMap, map, catchError } from 'rxjs/operators'
 import * as HighscoreActions from './highscore.actions'
 import { Role, ClanMember } from '../model/clan-member.model'
 import { HighscoreService } from '../service/highscore.service'
-import { AppState } from 'src/app/store/app.reducer'
-import { Store } from '@ngrx/store'
 import { HttpClient } from '@angular/common/http'
-import { of, empty } from 'rxjs'
+import { of } from 'rxjs'
 import { Skill } from '../model/skill.model'
 import { HighscoreLightProfile } from '../model/highscore-light-profile.model'
 import { LoadingState } from 'src/app/shared/model/call-state.model'
@@ -15,6 +13,8 @@ import { RuneMetricsProfile } from '../model/runemetrics-profile.model'
 import { Activity } from '../model/activity.model'
 import { Quest, Status } from '../model/quest.model'
 import { SesonalEvent } from '../model/sesonal-event.model'
+import { utf8Encode } from '@angular/compiler/src/util'
+import { SharedService } from 'src/app/shared/service/shared.service'
 
 export interface RuneMetricsResponse {
     magic: number
@@ -69,7 +69,6 @@ export class HighscoreEffects {
     constructor(
         private actions$: Actions,
         private highscoreService: HighscoreService,
-        private store: Store<AppState>,
         private http: HttpClient
     ) {}
 
@@ -77,7 +76,7 @@ export class HighscoreEffects {
     fetchClanMembers = this.actions$.pipe(
         ofType(HighscoreActions.FETCH_CLAN_MEMBERS_OF_CLAN),
         switchMap((action: HighscoreActions.FetchClanMembersOfClan) => {
-            const url = this.highscoreService.getCompleteUrl(
+            const url = SharedService.getCompleteUrl(
                 HighscoreService.URL_CLANMEMBERS,
                 action.payload
             )
@@ -114,7 +113,7 @@ export class HighscoreEffects {
     fetchHighscoreLight = this.actions$.pipe(
         ofType(HighscoreActions.FETCH_PLAYERS_LIGHT_HIGHSCORE),
         switchMap((action: HighscoreActions.FetchPlayersLightHighscore) => {
-            const url = this.highscoreService.getCompleteUrl(
+            const url = SharedService.getCompleteUrl(
                 HighscoreService.URL_PLAYER_HIGHSCORE_LIGHT,
                 action.payload
             )
@@ -157,7 +156,7 @@ export class HighscoreEffects {
     fetchPlayersClanName = this.actions$.pipe(
         ofType(HighscoreActions.FETCH_PLAYERS_CLAN_NAME),
         switchMap((action: HighscoreActions.FetchPlayersClanName) => {
-            const url = this.highscoreService.getCompleteUrl(
+            const url = SharedService.getCompleteUrl(
                 HighscoreService.URL_PLAYER_CLAN_NAME,
                 action.payload
             )
@@ -171,14 +170,10 @@ export class HighscoreEffects {
                             action.type
                         )
                         const clanName = this.handlePlayerClanNameResponse(playerClanData)
-                        if (!clanName) {
+                        if (clanName != '' && !clanName) {
                             this.highscoreService.dispatchCallStateOfActionX(
                                 LoadingState.ERROR,
                                 action.type
-                            )
-                        } else if (clanName.length > 0) {
-                            this.store.dispatch(
-                                new HighscoreActions.FetchClanMembersOfClan(clanName)
                             )
                         }
                         return new HighscoreActions.SetPlayersClanName(clanName)
@@ -200,7 +195,7 @@ export class HighscoreEffects {
     fetchPlayersRuneMetricsProfile = this.actions$.pipe(
         ofType(HighscoreActions.FETCH_PLAYERS_RUNE_METRICS_PROFILE),
         switchMap((action: HighscoreActions.FetchPlayersRuneMetricsProfile) => {
-            const url = this.highscoreService.getCompleteUrl(
+            const url = SharedService.getCompleteUrl(
                 HighscoreService.URL_RUNEMETRICS_PROFILE,
                 action.payload
             )
@@ -238,7 +233,7 @@ export class HighscoreEffects {
     fetchPlayersQuestAchievements = this.actions$.pipe(
         ofType(HighscoreActions.FETCH_PLAYERS_QUEST_ACHIEVEMENTS),
         switchMap((action: HighscoreActions.FetchPlayersQuestAchievements) => {
-            const url = this.highscoreService.getCompleteUrl(
+            const url = SharedService.getCompleteUrl(
                 HighscoreService.URL_PLAYER_QUESTS,
                 action.payload
             )
@@ -274,7 +269,7 @@ export class HighscoreEffects {
     fetchPlayersSesonalEvents = this.actions$.pipe(
         ofType(HighscoreActions.FETCH_PLAYERS_SESONAL_EVENTS),
         switchMap((action: HighscoreActions.FetchPlayersSesonalEvents) => {
-            const url = this.highscoreService.getCompleteUrl(
+            const url = SharedService.getCompleteUrl(
                 HighscoreService.URL_SESONAL_EVENTS,
                 action.payload
             )
@@ -407,10 +402,11 @@ export class HighscoreEffects {
     handlePlayerClanNameResponse(playerClanNameResponse: string) {
         if (!playerClanNameResponse) return null
         let response = playerClanNameResponse.split('[')[1].split(']')[0]
-        return JSON.parse(response)['clan']
+        return !JSON.parse(response)['clan'] ? '' : JSON.parse(response)['clan']
     }
 
     handleClanMemberResponse(clanMemberReponse: string) {
+        console.log('we are here')
         if (!clanMemberReponse) return null
         if (!clanMemberReponse.startsWith('Clanmate, Clan Rank, Total XP, Kills')) {
             return null
@@ -421,7 +417,16 @@ export class HighscoreEffects {
                 .filter((el, index) => index > 0)
                 .forEach((clanMember, index) => {
                     const prop = clanMember.split(',')
-                    clanMembers.push(new ClanMember(prop[0], Role[prop[1]], +prop[2], +prop[3]))
+                    const clanRole =
+                        !prop[1] || prop[1] == undefined || prop[1] == '' || prop[1] == 'undefined'
+                            ? Role.Unknown
+                            : Role[prop[1].replace(' ', '')]
+                    const memberName = prop[0]
+                        ? utf8Encode(prop[0])
+                              .replace('ï¿½', ' ')
+                              .replace('ï¿½', ' ')
+                        : ''
+                    clanMembers.push(new ClanMember(memberName, clanRole, +prop[2], +prop[3]))
                 })
             return clanMembers
         }

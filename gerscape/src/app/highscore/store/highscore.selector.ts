@@ -1,6 +1,6 @@
-import { createSelector } from '@ngrx/store'
-import { HighscoreState } from './highscore.reducer'
-import { AppState } from 'src/app/store/app.reducer'
+// import { createSelector } from '@ngrx/store'
+// import { HighscoreState } from './highscore.reducer'
+// import { AppState } from 'src/app/store/app.reducer'
 
 // export const highscoreState = (state: AppState) => state.highscore
 // export const highscoreClanNameState = (state: AppState) => state.highscore.playerProfile.clanName

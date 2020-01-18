@@ -1,12 +1,10 @@
-import { Component, OnInit, OnDestroy, HostBinding, ViewChild, ElementRef } from '@angular/core'
-import { Location } from '@angular/common'
+import { Component, OnInit, OnDestroy } from '@angular/core'
 import { AppState } from '../store/app.reducer'
 import { Store } from '@ngrx/store'
 import { HighscoreService } from './service/highscore.service'
-import { Router, ActivatedRoute, Params } from '@angular/router'
+import { Router, ActivatedRoute } from '@angular/router'
 import { Subscription, of, Observable } from 'rxjs'
 
-import { switchMap } from 'rxjs/operators'
 import { trigger, state, transition, animate, style } from '@angular/animations'
 import { HighscoreLightProfile } from './model/highscore-light-profile.model'
 import * as HighscoreActions from './store/highscore.actions'
@@ -42,6 +40,7 @@ export class HighscoreComponent implements OnInit, OnDestroy {
 
     storeSubscription: Subscription
     routeSubscription: Subscription
+    clanNameSubscription: Subscription
 
     tabs = ['stats', 'activities', 'quests', 'events', 'clan']
     tabDescs = ['Fertigkeiten', 'Aktivitäten', 'Abenteuer', 'Sesonale Events', 'Clan']
@@ -49,10 +48,14 @@ export class HighscoreComponent implements OnInit, OnDestroy {
 
     avatarUrl = HighscoreService.DEFAULT_AVATAR_IMAGE
 
+    clanName$: Observable<string>
+    clanNameCallState$: Observable<string>
     highscoreLightCallState$: Observable<string>
     highscoreLight: HighscoreLightProfile = null
 
-    routeFragments = ['', '', '', '']
+    highscoreFragment = ''
+    componentFragment = ''
+    playerNameFragment = ''
 
     constructor(
         private store: Store<AppState>,
@@ -66,6 +69,17 @@ export class HighscoreComponent implements OnInit, OnDestroy {
             HighscoreActions.FETCH_PLAYERS_LIGHT_HIGHSCORE
         )
 
+        this.clanNameCallState$ = this.highscoreService.getCallStateOfActionX$(
+            HighscoreActions.FETCH_PLAYERS_CLAN_NAME
+        )
+
+        this.clanName$ = this.highscoreService.getClanName$()
+
+        this.clanNameSubscription = this.clanName$.subscribe((clanName) => {
+            if (clanName && clanName.length > 0)
+                this.store.dispatch(new HighscoreActions.FetchClanMembersOfClan(clanName))
+        })
+
         this.storeSubscription = this.store
             .select((state: AppState) => state.highscore.highscoreLightProfile)
             .subscribe((highscoreLight) => {
@@ -75,14 +89,33 @@ export class HighscoreComponent implements OnInit, OnDestroy {
             })
 
         this.routeSubscription = this.route.params.subscribe((params) => {
-            if (this.routeFragments[3] != this.router.url.split('/')[3]) {
-                this.routeFragments = this.router.url.split('/')
-                const playerName = this.routeFragments[3]
-                this.store.dispatch(new HighscoreActions.FetchPlayersClanName(playerName))
-                this.store.dispatch(new HighscoreActions.FetchPlayersRuneMetricsProfile(playerName))
-                this.store.dispatch(new HighscoreActions.FetchPlayersLightHighscore(playerName))
-                this.store.dispatch(new HighscoreActions.FetchPlayersQuestAchievements(playerName))
-                this.store.dispatch(new HighscoreActions.FetchPlayersSesonalEvents(playerName))
+            let fragments = this.router.url.split('/')
+            console.log(fragments, fragments.length)
+            this.highscoreFragment = fragments.length >= 2 ? fragments[1] : ''
+            this.componentFragment = fragments.length >= 3 ? fragments[2] : ''
+            this.playerNameFragment = fragments.length >= 4 ? fragments[3] : ''
+
+            if (
+                this.highscoreFragment == 'highscore' &&
+                this.tabs.filter((tab) => tab == this.componentFragment).length > 0 &&
+                this.playerNameFragment &&
+                this.playerNameFragment != ''
+            ) {
+                this.store.dispatch(
+                    new HighscoreActions.FetchPlayersClanName(this.playerNameFragment)
+                )
+                this.store.dispatch(
+                    new HighscoreActions.FetchPlayersRuneMetricsProfile(this.playerNameFragment)
+                )
+                this.store.dispatch(
+                    new HighscoreActions.FetchPlayersLightHighscore(this.playerNameFragment)
+                )
+                this.store.dispatch(
+                    new HighscoreActions.FetchPlayersQuestAchievements(this.playerNameFragment)
+                )
+                this.store.dispatch(
+                    new HighscoreActions.FetchPlayersSesonalEvents(this.playerNameFragment)
+                )
             }
         })
     }

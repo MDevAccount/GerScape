@@ -1,24 +1,28 @@
-import * as GrandExchangeActions from './grandexchange.actions';
+import * as GrandExchangeActions from './grandexchange.actions'
+import { GrandExchangeItem } from '../model/grandexchange-item.model'
 
-export interface State {
-    test: boolean
+export interface GrandExchangeState {
+    grandExchangeItems: GrandExchangeItem[]
 }
 
-const initialState: State = {
-   test: true
-};
+const initialState: GrandExchangeState = {
+    grandExchangeItems: [],
+}
 
-export function grandExchangeReducer(state = initialState, action: GrandExchangeActions.GrandExchangeActions) {
-
-    switch(action.type) {
-
-        case GrandExchangeActions.TEST:
+export function grandExchangeReducer(
+    state = initialState,
+    action: GrandExchangeActions.GrandExchangeActions
+) {
+    switch (action.type) {
+        case GrandExchangeActions.GRANDEXCHANGE_ADD_ITEM:
+            let geItems = [...state.grandExchangeItems]
+            if (action.payload) geItems.push(action.payload)
             return {
                 ...state,
-                test: action.payload
+                grandExchangeItems: geItems,
             }
-            
+
         default:
-            return state;
+            return state
     }
 }

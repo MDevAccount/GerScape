@@ -31,10 +31,11 @@
   flex: auto;
 }
 
-.sticky-table-container {
+/* .sticky-table-container {
   height: 481px;
   overflow: auto;
-}
+} */
+
 table {
   width: 100%;
 }

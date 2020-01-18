@@ -21,7 +21,7 @@
     </mat-card>
     <mat-card>
       <mat-card-title>
-        Erfahrungspunkte
+        Ep
       </mat-card-title>
       <mat-card-subtitle>
         {{highscoreLight ? (highscoreLight.totalXp | number) : '-'}}
@@ -43,6 +43,14 @@
         {{highscoreLight ? (highscoreLight.combatLevel | number:'1.0-0') : '-'}}
       </mat-card-subtitle>
     </mat-card>
+        <mat-card>
+            <mat-card-title>
+                Clan
+            </mat-card-title>
+            <mat-card-subtitle>
+                {{(clanName$ | async) != null && (clanName$ | async) != ''  ? (clanName$ | async) : '-'}}
+            </mat-card-subtitle>
+        </mat-card>
   </div>
   <div gdArea="left-side-charts" fxLayoutGap="10px" div fxLayout="column" fxLayoutAlign="start end">
     <mat-card style="height: 260px; width: 200px;">
@@ -80,7 +88,7 @@
                 <a 
                     mat-tab-link 
                     *ngFor="let tab of tabs; let i = index" 
-                    [routerLink]="tab + '/' + routeFragments[3]" 
+                    [routerLink]="[tab,playerNameFragment]" 
                     routerLinkActive #rla="routerLinkActive"
                     [active]="rla.isActive">
                     {{tabDescs[i]}}

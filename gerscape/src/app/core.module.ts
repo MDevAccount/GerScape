@@ -1,16 +1,20 @@
-import { NgModule, LOCALE_ID } from '@angular/core';
-import { HighscoreService } from './highscore/service/highscore.service';
-import { DecimalPipe, registerLocaleData } from '@angular/common';
+import { NgModule, LOCALE_ID } from '@angular/core'
+import { HighscoreService } from './highscore/service/highscore.service'
+import { DecimalPipe, registerLocaleData } from '@angular/common'
 
-import localeDe from '@angular/common/locales/de';
+import localeDe from '@angular/common/locales/de'
+import { GrandExchangeService } from './grandexchange/service/grandexchange.service'
+import { SharedService } from './shared/service/shared.service'
 
-registerLocaleData(localeDe);
+registerLocaleData(localeDe)
 
 @NgModule({
     providers: [
-        HighscoreService, 
+        HighscoreService,
+        GrandExchangeService,
+        SharedService,
         DecimalPipe,
-        { provide: LOCALE_ID, useValue: "de" }
-      ],
+        { provide: LOCALE_ID, useValue: 'de' },
+    ],
 })
-export class CoreModule { }
+export class CoreModule {}

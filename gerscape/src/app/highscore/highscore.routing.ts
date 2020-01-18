@@ -10,60 +10,54 @@ import { HighscoreClanComponent } from './highscore-clan/highscore-clan.componen
 const routes: Routes = [
     //     {path: 'users', redirectTo: 'users/'},
     // {path: 'users/:filter', component: ItemsComponent}
-
+    {
+        path: '',
+        redirectTo: 'stats/',
+        pathMatch: 'full',
+    },
+    {
+        path: 'stats',
+        redirectTo: 'stats/',
+    },
+    {
+        path: 'activities',
+        redirectTo: 'activities/',
+    },
+    {
+        path: 'quests',
+        redirectTo: 'quests/',
+    },
+    {
+        path: 'clan',
+        redirectTo: 'clan/',
+    },
+    {
+        path: 'sesonal',
+        redirectTo: 'sesonal/',
+    },
     {
         path: '',
         component: HighscoreComponent,
         children: [
             {
-                path: 'stats',
+                path: 'stats/:playername',
                 component: HighscoreStatsComponent,
-                children: [
-                    {
-                        path: ':playername',
-                        component: HighscoreStatsComponent,
-                    },
-                ],
             },
             {
                 path: 'activities/:playername',
                 component: HighscoreActivitiesComponent,
-                children: [
-                    {
-                        path: ':playername',
-                        component: HighscoreStatsComponent,
-                    },
-                ],
             },
             {
                 path: 'quests/:playername',
                 component: HighscoreQuestsComponent,
-                children: [
-                    {
-                        path: ':playername',
-                        component: HighscoreStatsComponent,
-                    },
-                ],
-            },
-            {
-                path: 'events/:playername',
-                component: HighscoreSesonalEventsComponent,
-                children: [
-                    {
-                        path: ':playername',
-                        component: HighscoreStatsComponent,
-                    },
-                ],
             },
             {
                 path: 'clan/:playername',
                 component: HighscoreClanComponent,
-                children: [
-                    {
-                        path: ':playername',
-                        component: HighscoreStatsComponent,
-                    },
-                ],
+            },
+            {
+                path: 'events/:playername',
+                component: HighscoreSesonalEventsComponent,
             },
         ],
     },

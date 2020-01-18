@@ -1,12 +1,11 @@
 import { Component, ViewChild, OnInit, OnDestroy } from '@angular/core'
-import { MatSort, MatTableDataSource, MatSortable } from '@angular/material'
+import { MatSort, MatTableDataSource } from '@angular/material'
 import { AppState } from 'src/app/store/app.reducer'
 import { Store } from '@ngrx/store'
 import { HighscoreService } from '../service/highscore.service'
 import { BreakpointObserver } from '@angular/cdk/layout'
 import { DecimalPipe } from '@angular/common'
-import { Subscription, of, Observable } from 'rxjs'
-import { switchMap, mergeMap, map, flatMap, tap } from 'rxjs/operators'
+import { Subscription, Observable } from 'rxjs'
 import { Skill } from '../model/skill.model'
 import * as HighscoreActions from '../store/highscore.actions'
 
@@ -17,8 +16,10 @@ import * as HighscoreActions from '../store/highscore.actions'
 })
 export class HighscoreStatsComponent implements OnInit, OnDestroy {
     @ViewChild(MatSort, { static: true }) sort: MatSort
+
     displayedColumns: string[] = ['icon', 'level', 'xp', 'xpProgress', 'rank']
     dataSource = new MatTableDataSource<Skill>([])
+
     skillIcons = HighscoreService.SKILL_ICONS
     skillNames = HighscoreService.SKILL_NAMES
     smallScreen = false

@@ -1,14 +1,11 @@
-import { Component, ViewChild, OnInit, OnDestroy, Input } from '@angular/core'
+import { Component, ViewChild, OnInit, OnDestroy } from '@angular/core'
 import { MatSort, MatTableDataSource, MatPaginator } from '@angular/material'
 import { AppState } from 'src/app/store/app.reducer'
-import { Store, select } from '@ngrx/store'
+import { Store } from '@ngrx/store'
 import { Subscription, Observable } from 'rxjs'
 import * as HighscoreActions from '../store/highscore.actions'
-import { CallState } from 'src/app/shared/model/call-state.model'
 import { HighscoreService } from '../service/highscore.service'
-import { ClanMember } from '../model/clan-member.model'
-import { ThrowStmt } from '@angular/compiler'
-import { map } from 'rxjs/operators'
+import { ClanMember, Role } from '../model/clan-member.model'
 
 @Component({
     selector: 'app-highscore-clan',
@@ -17,6 +14,7 @@ import { map } from 'rxjs/operators'
 })
 export class HighscoreClanComponent implements OnInit, OnDestroy {
     @ViewChild(MatSort, { static: true }) sort: MatSort
+    @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator
 
     displayedColumns: string[] = ['name', 'role', 'clanXp', 'kills']
     dataSource = new MatTableDataSource<ClanMember>()
@@ -32,6 +30,7 @@ export class HighscoreClanComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.dataSource.sort = this.sort
+        this.dataSource.paginator = this.paginator
 
         this.clanName$ = this.highscoreService.getClanName$()
 
@@ -56,7 +55,16 @@ export class HighscoreClanComponent implements OnInit, OnDestroy {
         if (this.storeSubscription) this.storeSubscription.unsubscribe()
     }
 
-    getRole(clanMember: ClanMember) {
-        return 'rolle'
+    getRoleImage(role: Role) {
+        if (role) return HighscoreService.ROLE_ICONS.filter((data) => data.engRole == role)[0].image
+    }
+
+    getRoleName(role: Role) {
+        if (role) {
+            const wtfBug = HighscoreService.ROLE_ICONS.filter((data) => data.engRole == role)
+            return wtfBug.length > 0 ? wtfBug[0].gerRole : ''
+        } else {
+            return ''
+        }
     }
 }

@@ -9,11 +9,16 @@ export class ClanMember {
 
 export enum Role {
     Owner = 'Owner',
+    Admin = 'Admin',
+    Overseer = 'Overseer',
+    Coordinator = 'Coordinator',
     DeputyOwner = 'Deputy Owner',
     General = 'General',
+    Organiser = 'Organiser',
     Captain = 'Captain',
     Lieutenant = 'Lieutenant',
     Sergeant = 'Sergeant',
     Corporal = 'Corporal',
     Recruit = 'Recruit',
+    Unknown = 'Unknown',
 }

@@ -1,7 +1,7 @@
-<div [class]="
-    (highscoreLightCallState$ | async) == 'LOADED' && skillsCount > 0
+<!-- <div [class]=" -->
+    <!-- (highscoreLightCallState$ | async) == 'LOADED' && skillsCount > 0
     ? 'sticky-table-container'
-    : ''">
+    : ''"> -->
   <table
     fxFlexFill
     mat-table
@@ -62,7 +62,7 @@
     <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
   </table>
-</div>
+<!-- </div> -->
 
 <mat-card *ngIf="(highscoreLightCallState$ | async) == 'LOADING'">
     <mat-spinner>

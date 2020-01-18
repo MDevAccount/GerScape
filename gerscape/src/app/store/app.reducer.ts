@@ -4,7 +4,7 @@ import * as fromGrandExchange from '../grandExchange/store/grandexchange.reducer
 
 export interface AppState {
     highscore: fromHighscore.HighscoreState
-    grandExchange: fromGrandExchange.State
+    grandExchange: fromGrandExchange.GrandExchangeState
 }
 
 export const appReducer: ActionReducerMap<AppState> = {
