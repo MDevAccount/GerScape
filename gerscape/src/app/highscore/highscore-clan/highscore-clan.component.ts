@@ -6,6 +6,7 @@ import { Subscription, Observable } from 'rxjs'
 import * as HighscoreActions from '../store/highscore.actions'
 import { HighscoreService } from '../service/highscore.service'
 import { ClanMember, Role } from '../model/clan-member.model'
+import { map } from 'rxjs/operators'
 
 @Component({
     selector: 'app-highscore-clan',

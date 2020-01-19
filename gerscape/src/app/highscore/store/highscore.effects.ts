@@ -13,7 +13,6 @@ import { RuneMetricsProfile } from '../model/runemetrics-profile.model'
 import { Activity } from '../model/activity.model'
 import { Quest, Status } from '../model/quest.model'
 import { SesonalEvent } from '../model/sesonal-event.model'
-import { utf8Encode } from '@angular/compiler/src/util'
 import { SharedService } from 'src/app/shared/service/shared.service'
 
 export interface RuneMetricsResponse {
@@ -421,12 +420,7 @@ export class HighscoreEffects {
                         !prop[1] || prop[1] == undefined || prop[1] == '' || prop[1] == 'undefined'
                             ? Role.Unknown
                             : Role[prop[1].replace(' ', '')]
-                    const memberName = prop[0]
-                        ? utf8Encode(prop[0])
-                              .replace('ï¿½', ' ')
-                              .replace('ï¿½', ' ')
-                        : ''
-                    clanMembers.push(new ClanMember(memberName, clanRole, +prop[2], +prop[3]))
+                    clanMembers.push(new ClanMember(prop[0], clanRole, +prop[2], +prop[3]))
                 })
             return clanMembers
         }

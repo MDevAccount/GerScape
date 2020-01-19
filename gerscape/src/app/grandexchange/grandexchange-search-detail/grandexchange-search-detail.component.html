@@ -1,0 +1,26 @@
+<div fxLayoutAlign="start end">
+    <div gdGap="10px" gdAreas="top | bottom">
+        <div fxLayout="row" fxLayoutAlign="start end" fxLayoutGap="10px">
+            <mat-card>
+                <mat-card-title>
+                    <img [src]="" [alt]="" [matTooltip]="" height="125" width="125">
+                </mat-card-title>
+            </mat-card>
+            <mat-card>
+                <mat-card-title>
+                    Item Name
+                </mat-card-title>
+                <mat-card-subtitle>
+                    Kategorie
+                </mat-card-subtitle>
+            </mat-card>
+        </div>
+        <mat-card>
+            <mat-card-content>
+                <mat-form-field>
+                    <input (change)="onTextChange.next($event.value)" matInput placeholder="Suchen...">
+                </mat-form-field>
+            </mat-card-content>
+        </mat-card>
+    </div>
+</div>

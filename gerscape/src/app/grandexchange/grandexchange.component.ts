@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router'
 import { Store } from '@ngrx/store'
 import { AppState } from '../store/app.reducer'
 import { Subscription } from 'rxjs'
-import { FetchGrandExchangeItem } from './store/grandexchange.actions'
+import * as GrandExchangeActions from './store/grandexchange.actions'
 
 @Component({
     selector: 'app-grandexchange',
@@ -23,11 +23,18 @@ export class GrandExchangeComponent implements OnInit, OnDestroy {
 
         this.storeSubscription = this.store.select('grandExchange').subscribe((state) => {})
 
-        this.store.dispatch(new FetchGrandExchangeItem(123))
+        this.store.dispatch(new GrandExchangeActions.FetchGrandExchangeItem(123))
+        this.store.dispatch(new GrandExchangeActions.FetchGrandExchangeItem(12))
+        this.store.dispatch(new GrandExchangeActions.FetchGrandExchangeItem(347))
+        this.store.dispatch(new GrandExchangeActions.FetchGrandExchangeItem(349))
+        this.store.dispatch(new GrandExchangeActions.FetchGrandExchangeItem(351))
+        this.store.dispatch(new GrandExchangeActions.FetchGrandExchangeItem(355))
+
+        this.store.dispatch(new GrandExchangeActions.FetchGrandExchangeItemGraphData(21787))
     }
 
     ngOnDestroy() {
-        this.storeSubscription.unsubscribe()
-        this.routeSubscription.unsubscribe()
+        if (this.storeSubscription) this.storeSubscription.unsubscribe()
+        if (this.routeSubscription) this.routeSubscription.unsubscribe()
     }
 }

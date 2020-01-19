@@ -1,4 +1,20 @@
-<div fxLayout="row" fxLayoutAlign="start start" fxLayoutGap="10px" >
-    <app-grandexchange-item-list></app-grandexchange-item-list>
-    <app-grandexchange-item-detail></app-grandexchange-item-detail>
+;<div gdGap="10px" gdAreas="table-search top-empty | graph empty ">
+    <div gdArea="table-search">
+        <div fxLayout="row" fxLayoutAlign="end start" fxLayoutGap="10px">
+            <div fxFlex="none">
+                <app-grandexchange-item-list></app-grandexchange-item-list>
+            </div>
+            <div fxFlex="none" fxLayout="row" fxLayoutAlign="end end">
+                <app-grandexchange-search-detail></app-grandexchange-search-detail>
+            </div>
+        </div>
+    </div>
+    <div gdArea="graph">
+        <div fxLayout="row" fxLayoutAlign="end start" fxLayoutGap="10px">
+            <app-grandexchange-item-chart></app-grandexchange-item-chart>
+        </div>
+    </div>
+    <div gdArea="empty" fxLayoutGap="10px" style="width: 75px;">
+        <div fxFlex="none"></div>
+    </div>
 </div>

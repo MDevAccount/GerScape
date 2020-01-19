@@ -9,6 +9,11 @@ body { margin: 0; font-family: 'El Messiri'; }
     border-bottom-color: #43e424 !important;
 }
 
+.mat-row:hover {
+  background-color: #434443 !important;
+  cursor: pointer;
+}
+
 ::-webkit-scrollbar {
   width: 9px;
   height: 9px;

@@ -1,83 +1,75 @@
-<!-- <div fxLayout="column" fxLayoutAlign=" start" fxLayoutGap="10px">
-    <mat-card>
-        <mat-card-title>
-            textbox here
-        </mat-card-title>
-        <mat-card-content style="height: 500px;">
-            <cdk-virtual-scroll-viewport itemSize="50" class="example-viewport">
-                <div *cdkVirtualFor="let item of items" class="example-item">   
-                    <app-grandexchange-list-item></app-grandexchange-list-item>
-                </div>
-              </cdk-virtual-scroll-viewport>
-        </mat-card-content>
-    </mat-card>
-</div> -->
 
-<div [class]="isLoadingGrandExchangeItems ?'' : 'sticky-table'">
-    <table  fxFlexFill mat-table matSort matSortActive="created" [dataSource]="dataSource" class="mat-elevation-z8">
+<mat-card >
+    <mat-card-title>
+        <div class="example-container mat-elevation-z8">
+            <!-- <div class="example-loading-shade" *ngIf="(fetchGrandExchangeItemSetCallState$ | async) == 'LOADING'">
+                 <mat-spinner *ngIf="(fetchGrandExchangeItemSetCallState$ | async) == 'LOADING'"></mat-spinner> 
+                 <div class="example-rate-limit-reached" *ngIf="isRateLimitReached">
+                    GitHub's API rate limit has been reached. It will be reset in one minute.
+                </div> 
+            </div> -->
+            <div class="example-table-container">
+                <table mat-table matSort matSortActive="created" class="example-table" [dataSource]="dataSource">
+                    <ng-container matColumnDef="members">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Mitglied</th>
+                        <td mat-cell *matCellDef="let grandExchangeItem">
+                            <img [src]="'./assets/img/' + (grandExchangeItem.members ? 'membership-icon' : 'F2P-icon' ) + '.png'"
+                                [alt]="(grandExchangeItem.members ? 'Mitglied' : 'Frei' )"
+                                [matTooltip]="(grandExchangeItem.members ? 'Mitglied' : 'Frei')" height="32" width="32">
+                        </td>
+                    </ng-container>
 
-        <ng-container matColumnDef="member">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Mitglied</th>
-            <td mat-cell *matCellDef="let itemResponse"> 
-                <img 
-                    [src]="'./assets/img/' + (itemResponse.item.members == 'true' ? 'membership-icon' : 'F2P-icon' ) + '.png'" 
-                    [alt]="(itemResponse.item.members == 'true' ? 'Mitglied' : 'Frei' )"
-                    [matTooltip]="(itemResponse.item.members == 'true' ? 'Mitglied' : 'Frei')"
-                    height="32" 
-                    width="32">
-            </td>
-        </ng-container>
-    
-        <ng-container matColumnDef="icon">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
-            <td mat-cell *matCellDef="let itemResponse"> 
-                <img 
-                    [src]="itemResponse.item.icon" 
-                    [alt]="itemResponse.item.name"
-                    [matTooltip]="itemResponse.item.name"
-                    height="32" 
-                    width="32">
-            </td>
-        </ng-container>
+                    <ng-container matColumnDef="icon">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
+                        <td mat-cell *matCellDef="let grandExchangeItem">
+                            <img [src]="grandExchangeItem.icon" [alt]="grandExchangeItem.name" [matTooltip]="grandExchangeItem.name"
+                                height="32" width="32">
+                        </td>
+                    </ng-container>
 
-        <ng-container matColumnDef="name">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
-            <td mat-cell *matCellDef="let itemResponse"> {{itemResponse.item.name}} </td>
-        </ng-container>
+                    <ng-container matColumnDef="name">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+                        <td mat-cell *matCellDef="let grandExchangeItem"> {{grandExchangeItem.name}} </td>
+                    </ng-container>
 
-        <ng-container matColumnDef="price">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Preis</th>
-            <td mat-cell *matCellDef="let itemResponse"> {{itemResponse.item.price}} </td>
-        </ng-container>
+                    <ng-container matColumnDef="priceToday">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Preis</th>
+                        <td mat-cell *matCellDef="let grandExchangeItem"> {{grandExchangeItem.priceToday}} </td>
+                    </ng-container>
 
-        <ng-container matColumnDef="today">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Heute</th>
-            <td mat-cell *matCellDef="let itemResponse"> {{itemResponse.item.today.change}} </td>
-        </ng-container>
+                    <ng-container matColumnDef="day30Change">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>30T</th>
+                        <td mat-cell *matCellDef="let grandExchangeItem" [style.color]="getColorForCell(grandExchangeItem.day30Change)">
+                            {{grandExchangeItem.day30Change}}
+                        </td>
+                    </ng-container>
 
-        <ng-container matColumnDef="30d">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>30T</th>
-            <td mat-cell *matCellDef="let itemResponse"> {{itemResponse.item.day.change}} </td>
-        </ng-container>
+                    <ng-container matColumnDef="day90Change">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>90T</th>
+                        <td mat-cell *matCellDef="let grandExchangeItem" [style.color]="getColorForCell(grandExchangeItem.day90Change)">
+                            {{grandExchangeItem.day90Change}}
+                        </td>
+                    </ng-container>
 
-        <ng-container matColumnDef="90day">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>90T</th>
-            <td mat-cell *matCellDef="let itemResponse"> {{itemResponse.item.day.change}} </td>
-        </ng-container>
+                    <ng-container matColumnDef="day180Change">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>180T</th>
+                        <td mat-cell *matCellDef="let grandExchangeItem"
+                            [style.color]="getColorForCell(grandExchangeItem.day180Change)"> {{grandExchangeItem.day180Change}}
+                        </td>
+                    </ng-container>
 
-        <ng-container matColumnDef="180day">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>180T</th>
-            <td mat-cell *matCellDef="let itemResponse"> {{itemResponse.item.day.change}} </td>
-        </ng-container>
-        
-        <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-    </table>
-</div>
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="clickRow.next(row)"></tr>
+                </table>
+            </div>
 
+            <!-- <mat-paginator [length]="itemCount" [pageSize]="30"></mat-paginator> -->
 
-<mat-card 
-    *ngIf="isLoadingGrandExchangeItems">
-  <mat-spinner>
-  </mat-spinner>
+            <mat-card *ngIf="(fetchGrandExchangeItemSetCallState$ | async) == 'INIT'">
+                <p>
+                    Noch keine Suche gestartet
+                </p>
+            </mat-card>
+        </div>
+    </mat-card-title>
 </mat-card>

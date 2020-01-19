@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core'
 import { Actions, Effect, ofType } from '@ngrx/effects'
 import * as GrandExchangeActions from './grandexchange.actions'
-import { switchMap, map, catchError } from 'rxjs/operators'
+import { map, catchError, flatMap } from 'rxjs/operators'
 import { GrandExchangeService } from '../service/grandexchange.service'
 import { SharedService } from 'src/app/shared/service/shared.service'
 import { LoadingState } from 'src/app/shared/model/call-state.model'
 import { of } from 'rxjs'
 import { GrandExchangeItem, Trend } from '../model/grandexchange-item.model'
 import { HttpClient } from '@angular/common/http'
+import { GrandExchangeItemGraphData, GraphData } from '../model/grandexchange-item-graph-data.model'
 
 export interface ItemResponse {
     item: Item
@@ -39,6 +40,11 @@ export interface Day {
     change: string
 }
 
+export interface ItemGraphResponse {
+    daily: { [key: string]: number }
+    average: { [key: string]: number }
+}
+
 @Injectable()
 export class GrandExchangeEffects {
     constructor(
@@ -48,9 +54,9 @@ export class GrandExchangeEffects {
     ) {}
 
     @Effect()
-    fetchClanMembers = this.actions$.pipe(
-        ofType(GrandExchangeActions.GRANDEXCHANGE_FETCH_ITEM),
-        switchMap((action: GrandExchangeActions.FetchGrandExchangeItem) => {
+    fetchGrandExchangeItem = this.actions$.pipe(
+        ofType(GrandExchangeActions.FETCH_GRAND_EXCHANGE_ITEM),
+        flatMap((action: GrandExchangeActions.FetchGrandExchangeItem) => {
             const url = SharedService.getCompleteUrl(
                 GrandExchangeService.URL_ITEM,
                 '' + action.payload
@@ -81,6 +87,51 @@ export class GrandExchangeEffects {
         })
     )
 
+    @Effect()
+    fetchItemGraph = this.actions$.pipe(
+        ofType(GrandExchangeActions.FETCH_GRAND_EXCHANGE_ITEM_GRAPH_DATA),
+        flatMap((action: GrandExchangeActions.FetchGrandExchangeItemGraphData) => {
+            const url = SharedService.getCompleteUrl(
+                GrandExchangeService.URL_ITEM_GRAPH_DATA,
+                '' + action.payload
+            )
+            this.grandExchangeService.dispatchCallStateOfActionX(LoadingState.LOADING, action.type)
+            return this.http.get<ItemGraphResponse>(url).pipe(
+                map((itemGraphResponse) => {
+                    this.grandExchangeService.dispatchCallStateOfActionX(
+                        LoadingState.LOADED,
+                        action.type
+                    )
+                    return new GrandExchangeActions.AddGrandExchangeItemGraph(
+                        this.handleItemGraphResponse(action.payload, itemGraphResponse)
+                    )
+                }),
+                catchError((error) => {
+                    console.log(error)
+                    this.grandExchangeService.dispatchCallStateOfActionX(
+                        LoadingState.ERROR,
+                        action.type,
+                        error
+                    )
+                    return of(new GrandExchangeActions.AddGrandExchangeItemGraph(null))
+                })
+            )
+        })
+    )
+
+    handleItemGraphResponse(id: number, res: ItemGraphResponse) {
+        if (!res) return null
+        let daily: GraphData[] = []
+        let average: GraphData[] = []
+        Object.keys(res.daily).forEach((key) => {
+            daily.push(new GraphData(+key, res.daily[key]))
+        })
+        Object.keys(res.average).forEach((key) => {
+            average.push(new GraphData(+key, res.average[key]))
+        })
+        return new GrandExchangeItemGraphData(id, daily, average)
+    }
+
     handleItemResponse(res: ItemResponse) {
         if (!res) return null
         return new GrandExchangeItem(
@@ -92,7 +143,7 @@ export class GrandExchangeEffects {
             res.item.name,
             res.item.description,
             res.item.members == 'true' ? true : false,
-            res.item.today.price,
+            res.item.current.price,
             Trend[res.item.today.trend],
             Trend[res.item.day30.trend],
             res.item.day30.change,

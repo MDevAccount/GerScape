@@ -1,0 +1,18 @@
+<mat-card>
+    <mat-card-content>
+        <apx-chart 
+            [chart]="chart" 
+            [colors]="['#43E226', '#008995']" 
+            [labels]="['Durschnitt', 'Täglich']"
+            [stroke]="stroke" 
+            [markers]="markers" 
+            [series]="series"
+            [dataLabels]="{enabled: false}" 
+            [fill]="fill" 
+            [grid]="{borderColor: '#FFFFFF'}" 
+            [tooltip]="tooltip"
+            [xaxis]="xaxis"
+            [yaxis]="yaxis">
+        </apx-chart>
+    </mat-card-content>
+</mat-card>
