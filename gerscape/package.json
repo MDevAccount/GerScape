@@ -27,7 +27,7 @@
     "@ngrx/effects": "^8.6.0",
     "@ngrx/entity": "^8.6.0",
     "@ngrx/store": "^8.6.0",
-    "apexcharts": "^3.14.0",
+    "apexcharts": "^3.24.0",
     "hammerjs": "^2.0.8",
     "ng-apexcharts": "^1.1.3",
     "rxjs": "~6.4.0",
